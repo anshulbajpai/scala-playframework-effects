@@ -1,4 +1,4 @@
-package tools
+package com.github.anshulbajpai.playCats
 
 import cats.Id
 import cats.effect.IO

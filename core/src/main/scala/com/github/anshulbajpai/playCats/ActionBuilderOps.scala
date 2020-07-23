@@ -1,14 +1,12 @@
-package tools
-
+package com.github.anshulbajpai.playCats
 import cats.implicits._
 import cats.{Functor, Id}
-import play.api.mvc._
-import ToFutureInstances._
+import play.api.mvc.{Action, ActionBuilder}
 
 object ActionBuilderOps {
 
-  import ToResult.ops._
   import ToFuture.ops._
+  import ToResult.ops._
 
   implicit class ActionBuilderOps[+R[_], B](target: ActionBuilder[R, B]) {
 

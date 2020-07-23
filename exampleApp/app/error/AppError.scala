@@ -1,9 +1,9 @@
 package error
 
+import com.github.anshulbajpai.playCats.ToResult
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.mvc.Results.{BadRequest, NotFound}
-import tools.ToResult
 
 sealed trait AppError
 

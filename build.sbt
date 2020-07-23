@@ -7,14 +7,22 @@ lazy val root = (project in file(".")).settings(
 
 lazy val exampleApp = (project in file("exampleApp")).enablePlugins(PlayScala).settings(
   commonSettings,
-  scalacOptions += "-Ymacro-annotations",
   libraryDependencies ++= Seq(
     guice,
+  )
+).dependsOn(core)
+
+lazy val core = (project in file("core")).settings(
+  commonSettings,
+  scalacOptions += "-Ymacro-annotations",
+  libraryDependencies ++= Seq(
+    "com.typesafe.play" %% "play" % "2.8.2",
     "org.typelevel" %% "cats-effect" % "2.1.4",
     "org.typelevel" %% "simulacrum" % "1.0.0",
     "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
   )
 )
+
 
 lazy val commonSettings = Seq(
   scalaVersion := "2.13.3",

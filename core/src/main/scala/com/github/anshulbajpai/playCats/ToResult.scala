@@ -1,6 +1,6 @@
-package tools
+package com.github.anshulbajpai.playCats
 
-import play.api.libs.json.{Writes, _}
+import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Result, Results}
 import simulacrum.typeclass
 

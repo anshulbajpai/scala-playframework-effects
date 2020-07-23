@@ -6,8 +6,8 @@ import play.api.libs.json.{Json, OWrites}
 import play.api.mvc._
 import services.HelloService
 import services.HelloService.Message
-import tools.ActionBuilderOps._
-import tools.ToResult
+import com.github.anshulbajpai.playCats.ActionBuilderOps._
+import com.github.anshulbajpai.playCats.ToResult
 
 @Singleton
 class AsyncHelloController @Inject()(val controllerComponents: ControllerComponents, helloService: HelloService) extends BaseController {
