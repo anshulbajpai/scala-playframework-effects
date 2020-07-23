@@ -5,12 +5,11 @@ import play.api.libs.json.{Json, OWrites}
 import play.api.mvc._
 import services.HelloService
 import services.HelloService.Message
-import tools.ToResult
 import tools.ActionBuilderOps._
+import tools.ToResult
 
 @Singleton
 class SyncHelloController @Inject()(val controllerComponents: ControllerComponents, helloService: HelloService) extends BaseController {
-
 
   def hello1(name: String): Action[AnyContent] = Action.sync { implicit request: Request[AnyContent] =>
     helloService.hello(name) // OK JSON or Errors

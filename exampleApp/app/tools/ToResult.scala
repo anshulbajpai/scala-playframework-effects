@@ -11,7 +11,7 @@ trait ToResult[S] { self =>
 
 object ToResult {
 
-  import ops._
+  import ToResult.ops._
 
   implicit def errorOrA[E: ToResult, A: ToResult]: ToResult[Either[E, A]] = new ToResult[Either[E, A]] {
     override def toResult(s: Either[E, A]): Result = s.fold(_.toResult, _.toResult)

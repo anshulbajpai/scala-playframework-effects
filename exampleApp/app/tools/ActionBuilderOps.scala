@@ -3,6 +3,7 @@ package tools
 import cats.implicits._
 import cats.{Functor, Id}
 import play.api.mvc._
+import ToFutureInstances._
 
 object ActionBuilderOps {
 
