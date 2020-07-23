@@ -2,25 +2,16 @@ package tools
 
 import cats.Id
 import cats.effect.IO
+import simulacrum.typeclass
 
 import scala.concurrent.Future
 
+@typeclass
 trait ToFuture[F[_]] {
   def toFuture[T](t: F[T]): Future[T]
 }
 
 object ToFuture {
-
-  def apply[F[_]](implicit lift: ToFuture[F]): ToFuture[F] = lift
-
-  object Ops {
-
-    implicit class ToFutureOps[F[_] : ToFuture, T](target: F[T]) {
-      def toFuture: Future[T] = ToFuture[F].toFuture(target)
-    }
-
-  }
-
   implicit object ioToFuture extends ToFuture[IO] {
     override def toFuture[T](t: IO[T]): Future[T] = t.unsafeToFuture()
   }

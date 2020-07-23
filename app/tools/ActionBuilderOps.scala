@@ -6,8 +6,8 @@ import play.api.mvc._
 
 object ActionBuilderOps {
 
-  import ToFuture.Ops._
-  import ToResult.Ops._
+  import ToResult.ops._
+  import ToFuture.ops._
 
   implicit class ActionBuilderOps[+R[_], B](target: ActionBuilder[R, B]) {
 
