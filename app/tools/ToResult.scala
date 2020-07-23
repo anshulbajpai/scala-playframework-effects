@@ -3,8 +3,7 @@ package tools
 import play.api.libs.json.{Writes, _}
 import play.api.mvc.{Result, Results}
 
-
-trait ToResult[S] {
+trait ToResult[S] { self =>
   def toResult(s: S): Result
 }
 
@@ -32,4 +31,9 @@ object ToResult {
   implicit object noContentResult extends ToResult[Unit] {
     override def toResult(s: Unit): Result = Results.NoContent
   }
+
+  implicit object idResult extends ToResult[Result] {
+    override def toResult(s: Result): Result = s
+  }
+
 }

@@ -1,1 +1,1 @@
-GET     /hello/:name                           controllers.HelloController.hello(name: String)
+GET     /hello/:name                           controllers.AsyncHelloController.hello5(name: String)

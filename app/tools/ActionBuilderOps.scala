@@ -1,8 +1,7 @@
 package tools
 
-import cats.Functor
-import cats.syntax.functor._
-import play.api.http.Writeable
+import cats.implicits._
+import cats.{Functor, Id}
 import play.api.mvc._
 
 object ActionBuilderOps {
@@ -16,6 +15,7 @@ object ActionBuilderOps {
       block(request).map(_.toResult).toFuture
     }
 
+    def sync[S: ToResult](block: R[B] => S): Action[B] = asyncF[Id, S](block)
   }
 
 }
