@@ -9,9 +9,6 @@ lazy val root = (project in file(".")).settings(
 
 lazy val exampleApp = (project in file("exampleApp")).enablePlugins(PlayScala).settings(
   commonSettings,
-  libraryDependencies ++= Seq(
-    guice,
-  ),
   RoutesKeys.routesImport -= "controllers.Assets.Asset",
 ).dependsOn(core)
 

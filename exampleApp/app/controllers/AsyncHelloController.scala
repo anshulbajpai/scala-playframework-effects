@@ -3,14 +3,12 @@ package controllers
 import cats.effect.IO
 import com.github.anshulbajpai.playCats.ActionBuilderOps._
 import com.github.anshulbajpai.playCats.ToResult
-import javax.inject._
-import play.api.libs.json.{Json, OWrites}
+import play.api.libs.json.{ Json, OWrites }
 import play.api.mvc._
 import services.HelloService
 import services.HelloService.Message
 
-@Singleton
-class AsyncHelloController @Inject()(
+class AsyncHelloController(
   val controllerComponents: ControllerComponents,
   helloService: HelloService
 ) extends BaseController {

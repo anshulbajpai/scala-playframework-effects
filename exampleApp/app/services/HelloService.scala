@@ -3,10 +3,8 @@ package services
 import cats.effect.IO
 import error.AppError
 import error.AppError.{ BadUserName, UserNotFound }
-import javax.inject.Singleton
 import services.HelloService.Message
 
-@Singleton
 class HelloService {
   def helloF(name: String): IO[Either[AppError, Message]] = IO.pure(hello(name))
 

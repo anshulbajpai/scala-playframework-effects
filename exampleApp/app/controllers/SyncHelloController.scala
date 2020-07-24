@@ -1,15 +1,13 @@
 package controllers
 
-import javax.inject._
+import com.github.anshulbajpai.playCats.ActionBuilderOps._
+import com.github.anshulbajpai.playCats.ToResult
 import play.api.libs.json.{ Json, OWrites }
 import play.api.mvc._
 import services.HelloService
 import services.HelloService.Message
-import com.github.anshulbajpai.playCats.ActionBuilderOps._
-import com.github.anshulbajpai.playCats.ToResult
 
-@Singleton
-class SyncHelloController @Inject()(
+class SyncHelloController(
   val controllerComponents: ControllerComponents,
   helloService: HelloService
 ) extends BaseController {
