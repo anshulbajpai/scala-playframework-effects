@@ -28,13 +28,13 @@ lazy val exampleApp = (project in file("exampleApp"))
 
 lazy val core = (project in file("core")).settings(
   commonSettings,
-  scalacOptions ++= scalacOptionsVersion(scalaVersion.value),
+  scalacOptions ++= Seq("-P:wartremover:traverser:org.wartremover.warts.Unsafe") ++ scalacOptionsVersion(scalaVersion.value),
   libraryDependencies ++= Seq(
     play,
     catsEffect,
-    simulacrum
-  ) ++ scalaVersionBasedDependencies(scalaVersion.value),
-  scalacOptions += "-P:wartremover:traverser:org.wartremover.warts.Unsafe"
+    simulacrum,
+    scalaTestPlay
+  ) ++ scalaVersionBasedDependencies(scalaVersion.value)
 )
 
 def scalaVersionBasedDependencies(version: String) = {
