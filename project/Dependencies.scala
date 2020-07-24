@@ -13,5 +13,6 @@ object Dependencies {
   val play = "com.typesafe.play" %% "play" % playVersion
   val catsEffect = "org.typelevel" %% "cats-effect" % catsEffectVersion
   val simulacrum = "org.typelevel" %% "simulacrum" % simulacrumVersion
+  val macwire = "com.softwaremill.macwire" %% "macros" % "2.3.6" % "provided"
 
 }
