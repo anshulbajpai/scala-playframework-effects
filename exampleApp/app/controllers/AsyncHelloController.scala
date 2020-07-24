@@ -1,8 +1,8 @@
 package controllers
 
 import cats.Applicative
-import com.github.anshulbajpai.playCats.ActionBuilderOps._
-import com.github.anshulbajpai.playCats.{ ToFuture, ToResult }
+import com.github.anshulbajpai.scalaPlayEff.ActionBuilderOps._
+import com.github.anshulbajpai.scalaPlayEff.{ ToFuture, ToResult }
 import play.api.libs.json.{ Json, OWrites }
 import play.api.mvc._
 import services.HelloService

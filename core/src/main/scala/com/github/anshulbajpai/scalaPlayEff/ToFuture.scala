@@ -1,4 +1,4 @@
-package com.github.anshulbajpai.playCats
+package com.github.anshulbajpai.scalaPlayEff
 
 import cats.Id
 import cats.effect.IO

@@ -1,4 +1,4 @@
-package com.github.anshulbajpai.playCats
+package com.github.anshulbajpai.scalaPlayEff
 
 import play.api.libs.json.{ Json, Writes }
 import play.api.mvc.{ Result, Results }

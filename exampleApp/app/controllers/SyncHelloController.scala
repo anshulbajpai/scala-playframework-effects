@@ -1,7 +1,7 @@
 package controllers
 
-import com.github.anshulbajpai.playCats.ActionBuilderOps._
-import com.github.anshulbajpai.playCats.ToResult
+import com.github.anshulbajpai.scalaPlayEff.ActionBuilderOps._
+import com.github.anshulbajpai.scalaPlayEff.ToResult
 import play.api.libs.json.{ Json, OWrites }
 import play.api.mvc._
 import services.HelloService
