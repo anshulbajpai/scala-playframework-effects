@@ -1,7 +1,7 @@
 package com.github.anshulbajpai.playCats
 
-import play.api.libs.json.{Json, Writes}
-import play.api.mvc.{Result, Results}
+import play.api.libs.json.{ Json, Writes }
+import play.api.mvc.{ Result, Results }
 import simulacrum.typeclass
 
 @typeclass
@@ -13,9 +13,10 @@ object ToResult {
 
   import ToResult.ops._
 
-  implicit def errorOrA[E: ToResult, A: ToResult]: ToResult[Either[E, A]] = new ToResult[Either[E, A]] {
-    override def toResult(s: Either[E, A]): Result = s.fold(_.toResult, _.toResult)
-  }
+  implicit def errorOrA[E: ToResult, A: ToResult]: ToResult[Either[E, A]] =
+    new ToResult[Either[E, A]] {
+      override def toResult(s: Either[E, A]): Result = s.fold(_.toResult, _.toResult)
+    }
 
   implicit def okJsonResult[A: Writes]: ToResult[A] = new ToResult[A] {
     override def toResult(s: A): Result = Results.Ok(Json.toJson(s))

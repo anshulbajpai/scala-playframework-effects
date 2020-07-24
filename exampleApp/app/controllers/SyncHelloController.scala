@@ -1,7 +1,7 @@
 package controllers
 
 import javax.inject._
-import play.api.libs.json.{Json, OWrites}
+import play.api.libs.json.{ Json, OWrites }
 import play.api.mvc._
 import services.HelloService
 import services.HelloService.Message
@@ -9,25 +9,28 @@ import com.github.anshulbajpai.playCats.ActionBuilderOps._
 import com.github.anshulbajpai.playCats.ToResult
 
 @Singleton
-class SyncHelloController @Inject()(val controllerComponents: ControllerComponents, helloService: HelloService) extends BaseController {
+class SyncHelloController @Inject()(
+  val controllerComponents: ControllerComponents,
+  helloService: HelloService
+) extends BaseController {
 
-  def hello1(name: String): Action[AnyContent] = Action.sync { implicit request: Request[AnyContent] =>
+  def hello1(name: String): Action[AnyContent] = Action.sync { _ =>
     helloService.hello(name) // OK JSON or Errors
   }
 
-  def hello2(name: String): Action[AnyContent] = Action.sync { implicit request: Request[AnyContent] =>
+  def hello2(name: String): Action[AnyContent] = Action.sync { _: Request[AnyContent] =>
     helloService.hello(name).map(_ => ()) // NO Content  or Errors
   }
 
-  def hello3: Action[AnyContent] = Action.sync { implicit request: Request[AnyContent] =>
+  def hello3: Action[AnyContent] = Action.sync { _: Request[AnyContent] =>
     Message("Hello World") // OK JSON
   }
 
-  def hello4: Action[AnyContent] = Action.sync { implicit request: Request[AnyContent] =>
+  def hello4: Action[AnyContent] = Action.sync { _: Request[AnyContent] =>
     () // NO Content
   }
 
-  def hello5(name: String): Action[AnyContent] = Action.sync { implicit request: Request[AnyContent] =>
+  def hello5(name: String): Action[AnyContent] = Action.sync { _: Request[AnyContent] =>
     TempMessage(s"Temp hello $name") // Multi result
   }
 
@@ -44,9 +47,3 @@ class SyncHelloController @Inject()(val controllerComponents: ControllerComponen
 
   implicit val tempMessageWrites: OWrites[TempMessage] = Json.writes[TempMessage]
 }
-
-
-
-
-
-

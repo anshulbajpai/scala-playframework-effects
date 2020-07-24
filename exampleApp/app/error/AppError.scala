@@ -3,7 +3,7 @@ package error
 import com.github.anshulbajpai.playCats.ToResult
 import play.api.libs.json.Json
 import play.api.mvc.Result
-import play.api.mvc.Results.{BadRequest, NotFound}
+import play.api.mvc.Results.{ BadRequest, NotFound }
 
 sealed trait AppError
 
@@ -15,12 +15,18 @@ object AppError {
 
   implicit object appErrorResult extends ToResult[AppError] {
     override def toResult(appError: AppError): Result = appError match {
-      case UserNotFound(message) => NotFound(Json.obj(
-        "error" -> message
-      ))
-      case BadUserName(message) => BadRequest(Json.obj(
-        "error" -> message
-      ))
+      case UserNotFound(message) =>
+        NotFound(
+          Json.obj(
+            "error" -> message
+          )
+        )
+      case BadUserName(message) =>
+        BadRequest(
+          Json.obj(
+            "error" -> message
+          )
+        )
     }
   }
 }
