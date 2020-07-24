@@ -1,16 +1,17 @@
 package controllers
 
-import cats.effect.IO
+import cats.Applicative
 import com.github.anshulbajpai.playCats.ActionBuilderOps._
-import com.github.anshulbajpai.playCats.ToResult
+import com.github.anshulbajpai.playCats.{ ToFuture, ToResult }
 import play.api.libs.json.{ Json, OWrites }
 import play.api.mvc._
 import services.HelloService
 import services.HelloService.Message
+import cats.syntax.functor._
 
-class AsyncHelloController(
+class AsyncHelloController[F[_]: Applicative: ToFuture](
   val controllerComponents: ControllerComponents,
-  helloService: HelloService
+  helloService: HelloService[F]
 ) extends BaseController {
 
   def hello1(name: String): Action[AnyContent] = Action.asyncF {
@@ -22,15 +23,15 @@ class AsyncHelloController(
   }
 
   def hello3: Action[AnyContent] = Action.asyncF {
-    IO.pure(Message("Hello World")) // OK JSON
+    Applicative[F].pure(Message("Hello World")) // OK JSON
   }
 
   def hello4: Action[AnyContent] = Action.asyncF {
-    IO.unit // NO Content
+    Applicative[F].unit // NO Content
   }
 
   def hello5(name: String): Action[AnyContent] = Action.asyncF {
-    IO.pure(TempMessage(s"Temp hello $name")) // Multi result
+    Applicative[F].pure(TempMessage(s"Temp hello $name")) // Multi result
   }
 
   case class TempMessage(value: String)

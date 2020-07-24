@@ -7,9 +7,9 @@ import play.api.mvc._
 import services.HelloService
 import services.HelloService.Message
 
-class SyncHelloController(
+class SyncHelloController[F[_]](
   val controllerComponents: ControllerComponents,
-  helloService: HelloService
+  helloService: HelloService[F]
 ) extends BaseController {
 
   def hello1(name: String): Action[AnyContent] = Action.sync {

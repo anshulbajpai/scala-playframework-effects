@@ -1,12 +1,12 @@
 package services
 
-import cats.effect.IO
+import cats.Applicative
 import error.AppError
 import error.AppError.{ BadUserName, UserNotFound }
 import services.HelloService.Message
 
-class HelloService {
-  def helloF(name: String): IO[Either[AppError, Message]] = IO.pure(hello(name))
+class HelloService[F[_]: Applicative] {
+  def helloF(name: String): F[Either[AppError, Message]] = Applicative[F].pure(hello(name))
 
   def hello(name: String): Either[AppError, Message] = name match {
     case name if name.toLowerCase.contains("notfound") =>
