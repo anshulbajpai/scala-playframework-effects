@@ -1,33 +1,52 @@
 import play.sbt.routes.RoutesKeys
 import Dependencies._
 
-lazy val root = (project in file(".")).settings(
-  name := "scala-playframework-effects",
-  organization := "com.github.anshulbajpai",
-  version := "1.0-SNAPSHOT",
-  commonSettings,
-).aggregate(exampleApp)
+lazy val scala212               = "2.12.12"
+lazy val scala213               = "2.13.3"
+lazy val supportedScalaVersions = List(scala212, scala213)
 
-lazy val exampleApp = (project in file("exampleApp")).enablePlugins(PlayScala).settings(
-  commonSettings,
-  RoutesKeys.routesImport -= "controllers.Assets.Asset",
-  libraryDependencies ++= Seq(
-    macwire
+lazy val root = (project in file("."))
+  .settings(
+    name         := "scala-playframework-effects",
+    organization := "com.github.anshulbajpai",
+    version      := "1.0-SNAPSHOT",
+    commonSettings,
+    crossScalaVersions := Nil
   )
-).dependsOn(core)
+  .aggregate(exampleApp)
+
+lazy val exampleApp = (project in file("exampleApp"))
+  .enablePlugins(PlayScala)
+  .settings(
+    commonSettings,
+    RoutesKeys.routesImport -= "controllers.Assets.Asset",
+    libraryDependencies ++= Seq(
+      macwire
+    )
+  )
+  .dependsOn(core)
 
 lazy val core = (project in file("core")).settings(
   commonSettings,
-  scalacOptions += "-Ymacro-annotations",
+  scalacOptions ++= scalacOptionsVersion(scalaVersion.value),
   libraryDependencies ++= Seq(
     play,
     catsEffect,
     simulacrum
-  ),
+  ) ++ scalaVersionBasedDependencies(scalaVersion.value),
   scalacOptions += "-P:wartremover:traverser:org.wartremover.warts.Unsafe"
 )
 
+def scalaVersionBasedDependencies(version: String) = {
+  if (version.startsWith("2.13")) Seq.empty else
+  Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
+}
+
 lazy val commonSettings = Seq(
-  scalaVersion := "2.13.3",
-  scalafmtOnCompile := true
+  crossScalaVersions := supportedScalaVersions,
+  scalafmtOnCompile  := true
 )
+
+def scalacOptionsVersion(version: String) = {
+  if (version.startsWith("2.13")) Seq("-Ymacro-annotations") else Seq.empty
+}
