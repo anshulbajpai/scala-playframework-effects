@@ -2,7 +2,7 @@ import play.sbt.routes.RoutesKeys
 import Dependencies._
 
 lazy val root = (project in file(".")).settings(
-  name := "scala-playframework-tools",
+  name := "scala-playframework-effects",
   organization := "com.github.anshulbajpai",
   version := "1.0-SNAPSHOT",
   commonSettings,
