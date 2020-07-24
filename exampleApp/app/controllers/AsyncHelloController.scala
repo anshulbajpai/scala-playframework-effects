@@ -1,13 +1,13 @@
 package controllers
 
 import cats.effect.IO
+import com.github.anshulbajpai.playCats.ActionBuilderOps._
+import com.github.anshulbajpai.playCats.ToResult
 import javax.inject._
-import play.api.libs.json.{ Json, OWrites }
+import play.api.libs.json.{Json, OWrites}
 import play.api.mvc._
 import services.HelloService
 import services.HelloService.Message
-import com.github.anshulbajpai.playCats.ActionBuilderOps._
-import com.github.anshulbajpai.playCats.ToResult
 
 @Singleton
 class AsyncHelloController @Inject()(
@@ -15,23 +15,23 @@ class AsyncHelloController @Inject()(
   helloService: HelloService
 ) extends BaseController {
 
-  def hello1(name: String): Action[AnyContent] = Action.asyncF { _: Request[AnyContent] =>
+  def hello1(name: String): Action[AnyContent] = Action.asyncF {
     helloService.helloF(name) // OK JSON or Errors
   }
 
-  def hello2(name: String): Action[AnyContent] = Action.asyncF { _: Request[AnyContent] =>
+  def hello2(name: String): Action[AnyContent] = Action.asyncF {
     helloService.helloF(name).map(_.map(_ => ())) // NO Content  or Errors
   }
 
-  def hello3: Action[AnyContent] = Action.asyncF { _: Request[AnyContent] =>
+  def hello3: Action[AnyContent] = Action.asyncF {
     IO.pure(Message("Hello World")) // OK JSON
   }
 
-  def hello4: Action[AnyContent] = Action.asyncF { _: Request[AnyContent] =>
+  def hello4: Action[AnyContent] = Action.asyncF {
     IO.unit // NO Content
   }
 
-  def hello5(name: String): Action[AnyContent] = Action.asyncF { _: Request[AnyContent] =>
+  def hello5(name: String): Action[AnyContent] = Action.asyncF {
     IO.pure(TempMessage(s"Temp hello $name")) // Multi result
   }
 
