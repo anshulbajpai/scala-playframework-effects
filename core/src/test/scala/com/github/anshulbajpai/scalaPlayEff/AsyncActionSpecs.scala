@@ -4,33 +4,47 @@ import akka.stream.Materializer
 import cats.effect.IO
 import cats.syntax.either._
 import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.libs.json.{ Json, OWrites }
 import play.api.mvc.{ DefaultActionBuilder, Result, Results }
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements", "org.wartremover.warts.Any"))
-class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerTest {
+class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
 
   implicit lazy val materializer: Materializer = app.materializer
   implicit lazy val Action                     = app.injector.instanceOf(classOf[DefaultActionBuilder])
 
   import ActionBuilderOps._
 
-  "async block without a request" when {
-    "returns error " should {
-      "return error status " in {
-        val error = "Boom"
-        val action = Action.asyncF {
-          IO.pure(ActionError(error).asLeft[Unit])
-        }
-        val request = FakeRequest()
-        val result  = call(action, request)
-        status(result)          mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual error
+  "async block" should {
+    "return error when the action block returns error" in {
+      val error = "Boom"
+      val action = Action.asyncF {
+        IO.pure(ActionError(error).asLeft[Unit])
       }
+      val request = FakeRequest()
+      val result  = call(action, request)
+      status(result)          mustEqual BAD_REQUEST
+      contentAsString(result) mustEqual error
+    }
+
+    "return ok JSON response when the action block returns success message" in {
+      val messageValue = "Boom"
+      val action = Action.asyncF {
+        IO.pure(Message(messageValue).asRight[ActionError])
+      }
+      val request = FakeRequest()
+      val result  = call(action, request)
+      status(result)        mustEqual OK
+      contentAsJson(result) mustEqual Json.obj("message" -> messageValue)
     }
   }
+
+  case class Message(message: String)
+
+  implicit val messageWrites: OWrites[Message] = Json.writes[Message]
 
   case class ActionError(message: String)
 
