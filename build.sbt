@@ -13,7 +13,7 @@ lazy val root = (project in file("."))
     commonSettings,
     crossScalaVersions := Nil
   )
-  .aggregate(exampleApp)
+  .aggregate(core, exampleApp)
 
 lazy val exampleApp = (project in file("exampleApp"))
   .enablePlugins(PlayScala)
