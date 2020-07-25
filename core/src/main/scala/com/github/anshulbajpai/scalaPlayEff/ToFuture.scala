@@ -20,4 +20,8 @@ object ToFuture {
     override def toFuture[T](t: Id[T]): Future[T] = Future.successful(t)
   }
 
+  implicit object futureToFuture extends ToFuture[Future] {
+    override def toFuture[T](t: Future[T]): Future[T] = t
+  }
+
 }
