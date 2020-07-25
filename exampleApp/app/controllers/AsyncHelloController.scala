@@ -34,6 +34,10 @@ class AsyncHelloController[F[_]: Applicative: ToFuture](
     Applicative[F].pure(TempMessage(s"Temp hello $name")) // Multi result
   }
 
+  def hello6(name: String): Action[AnyContent] = Action.asyncF {
+    helloService.hello(name).asAsync // OK JSON or Errors
+  }
+
   case class TempMessage(value: String)
 
   implicit val messageToResult: ToResult[TempMessage] = new ToResult[TempMessage] {

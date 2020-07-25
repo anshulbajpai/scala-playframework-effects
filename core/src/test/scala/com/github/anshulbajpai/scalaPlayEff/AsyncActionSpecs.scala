@@ -95,6 +95,16 @@ class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
       contentAsJson(result) mustEqual Json.obj("message" -> messageValue)
     }
 
+    "work with no effect" in {
+      val messageValue = "Boom"
+      val action = Action.asyncF {
+        Message(messageValue).asRight[ActionError].asAsync
+      }
+      val request = FakeRequest()
+      val result  = call(action, request)
+      status(result)        mustEqual OK
+      contentAsJson(result) mustEqual Json.obj("message" -> messageValue)
+    }
   }
 
   case class Message(message: String)

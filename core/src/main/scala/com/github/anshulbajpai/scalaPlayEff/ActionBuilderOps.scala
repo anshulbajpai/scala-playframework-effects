@@ -9,6 +9,10 @@ object ActionBuilderOps {
   import ToFuture.ops._
   import ToResult.ops._
 
+  implicit class AsAsync[A](target: A) {
+    def asAsync: Id[A] = target
+  }
+
   implicit class ActionBuilderOps[+R[_], B](target: ActionBuilder[R, B]) {
 
     def asyncF[F[_]: Functor: ToFuture, S: ToResult](block: => F[S]): Action[AnyContent] =
@@ -27,13 +31,6 @@ object ActionBuilderOps {
       target.async(bodyParser) { request: R[A] =>
         block(request).map(_.toResult).toFuture
       }
-
-    def sync[S: ToResult](block: => S): Action[AnyContent] = asyncF[Id, S](block)
-
-    def sync[S: ToResult](block: R[B] => S): Action[B] = asyncF[Id, S](block)
-
-    def sync[S: ToResult, A](bodyParser: BodyParser[A])(block: R[A] => S): Action[A] =
-      asyncF[Id, S, A](bodyParser)(block)
   }
 
 }
