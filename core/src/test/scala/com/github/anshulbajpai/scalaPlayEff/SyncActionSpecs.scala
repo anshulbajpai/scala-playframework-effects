@@ -1,7 +1,5 @@
 package com.github.anshulbajpai.scalaPlayEff
 
-import cats.effect.IO
-import cats.instances.future._
 import cats.syntax.either._
 import com.github.anshulbajpai.scalaPlayEff.ActionTestHelpers._
 import org.scalatestplus.play.PlaySpec
@@ -11,10 +9,8 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-import scala.concurrent.Future
-
-@SuppressWarnings(Array("org.wartremover.warts.Any"))
-class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
+@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements", "org.wartremover.warts.Any"))
+class SyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
 
   implicit lazy val materializer = app.materializer
   lazy val Action                = app.injector.instanceOf(classOf[DefaultActionBuilder])
@@ -22,51 +18,44 @@ class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
 
   import ActionBuilderOps._
 
-  "asyncF" when {
+  "sync" when {
     val error        = "App Error"
     val messageValue = "App Message"
     "used with no request" should {
       implicit val request = FakeRequest()
       "return error when block returns Either.Left" in {
-        val action = Action.asyncF {
-          IO.pure(ActionError(error).asLeft[Unit])
+        val action = Action.sync {
+          ActionError(error).asLeft[Unit]
         }
         executeAndAssertStatusWithContent(action, BAD_REQUEST, Json.obj("error" -> error))
       }
       "return ok JSON response when the action block returns Either.Right" in {
-        val action = Action.asyncF {
-          IO.pure(ActionMessage(messageValue).asRight[ActionError])
+        val action = Action.sync {
+          ActionMessage(messageValue).asRight[ActionError]
         }
         executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
       }
       "return no content response when the action block returns Unit in Either.Right" in {
-        val action = Action.asyncF {
-          IO.pure(().asRight[ActionError])
+        val action = Action.sync {
+          ().asRight[ActionError]
         }
         executeAndAssertStatus(action, NO_CONTENT)
       }
       "return ok JSON response when the action block returns a non Either type" in {
-        val action = Action.asyncF {
-          IO.pure(ActionMessage(messageValue))
+        val action = Action.sync {
+          ActionMessage(messageValue)
         }
         executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
       }
       "return no content response when the action block returns Unit" in {
-        val action = Action.asyncF {
-          IO.unit
+        val action = Action.sync {
+          ()
         }
         executeAndAssertStatus(action, NO_CONTENT)
       }
       "return Result as it is" in {
-        val action = Action.asyncF {
-          IO.pure(Results.Ok(Json.toJson(ActionMessage(messageValue))))
-        }
-        executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
-      }
-      "work with Future effect" in {
-        implicit val ec = app.actorSystem.dispatcher
-        val action = Action.asyncF {
-          Future.successful(ActionMessage(messageValue).asRight[ActionError])
+        val action = Action.sync {
+          Results.Ok(Json.toJson(ActionMessage(messageValue)))
         }
         executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
       }
@@ -77,45 +66,38 @@ class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
       implicit val request =
         FakeRequest().withJsonBody(Json.obj("message" -> messageValue, "error" -> error))
       "return error when block returns Either.Left" in {
-        val action = Action(json).asyncF { req: Request[JsValue] =>
-          IO.pure(ActionError((req.body \ "error").as[String]).asLeft[Unit])
+        val action = Action(json).sync { req: Request[JsValue] =>
+          ActionError((req.body \ "error").as[String]).asLeft[Unit]
         }
         executeAndAssertStatusWithContent(action, BAD_REQUEST, Json.obj("error" -> error))
       }
       "return ok JSON response when the action block returns Either.Right" in {
-        val action = Action(json).asyncF { req: Request[JsValue] =>
-          IO.pure(ActionMessage((req.body \ "message").as[String]).asRight[ActionError])
+        val action = Action(json).sync { req: Request[JsValue] =>
+          ActionMessage((req.body \ "message").as[String]).asRight[ActionError]
         }
         executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
       }
       "return no content response when the action block returns Unit in Either.Right" in {
-        val action = Action(json).asyncF { _: Request[_] =>
-          IO.pure(().asRight[ActionError])
+        val action = Action(json).sync { _: Request[_] =>
+          ().asRight[ActionError]
         }
         executeAndAssertStatus(action, NO_CONTENT)
       }
       "return ok JSON response when the action block returns a non Either type" in {
-        val action = Action(json).asyncF { req: Request[JsValue] =>
-          IO.pure(ActionMessage((req.body \ "message").as[String]))
+        val action = Action(json).sync { req: Request[JsValue] =>
+          ActionMessage((req.body \ "message").as[String])
         }
         executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
       }
       "return no content response when the action block returns Unit" in {
-        val action = Action(json).asyncF { _: Request[_] =>
-          IO.unit
+        val action = Action(json).sync { _: Request[_] =>
+          ()
         }
         executeAndAssertStatus(action, NO_CONTENT)
       }
       "return Result as it is" in {
-        val action = Action(json).asyncF { req: Request[JsValue] =>
-          IO.pure(Results.Ok(Json.toJson(ActionMessage((req.body \ "message").as[String]))))
-        }
-        executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
-      }
-      "work with Future effect" in {
-        implicit val ec = app.actorSystem.dispatcher
-        val action = Action(json).asyncF { req: Request[JsValue] =>
-          Future.successful(ActionMessage((req.body \ "message").as[String]).asRight[ActionError])
+        val action = Action(json).sync { req: Request[JsValue] =>
+          Results.Ok(Json.toJson(ActionMessage((req.body \ "message").as[String])))
         }
         executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
       }
