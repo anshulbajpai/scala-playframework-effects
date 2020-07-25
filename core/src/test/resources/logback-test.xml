@@ -16,6 +16,7 @@
     <logger name="com.gargoylesoftware.htmlunit.javascript" level="OFF" />
 
     <logger name="play.api.http.HttpConfiguration" level="INFO" />
+    <logger name="akka.actor.CoordinatedShutdown" level="INFO" />
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />

@@ -3,18 +3,17 @@ package com.github.anshulbajpai.scalaPlayEff
 import cats.effect.IO
 import cats.instances.future._
 import cats.syntax.either._
-import org.scalatest.Assertion
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Writeable
-import play.api.libs.json.{JsValue, Json, OWrites}
+import play.api.libs.json.{ JsValue, Json, OWrites }
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements", "org.wartremover.warts.Any"))
+@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
 
   implicit lazy val materializer = app.materializer
@@ -24,72 +23,69 @@ class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
 
   "asyncF" when {
     val error        = "App Error"
-    val messageValue = "Boom"
-
+    val messageValue = "App Message"
     "used with no request" should {
-      val request = FakeRequest()
+      implicit val request = FakeRequest()
       "return error when block returns Either.Left" in {
         val action = Action.asyncF {
           IO.pure(ActionError(error).asLeft[Unit])
         }
-        executeAndAssertStatusWithContent(request, action, BAD_REQUEST, Json.obj("error" -> error))
+        executeAndAssertStatusWithContent(action, BAD_REQUEST, Json.obj("error" -> error))
       }
       "return ok JSON response when the action block returns Either.Right" in {
         val action = Action.asyncF {
           IO.pure(ActionMessage(messageValue).asRight[ActionError])
         }
-        executeAndAssertStatusWithContent(request, action, OK, Json.obj("message" -> messageValue))
+        executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
       }
       "return no content response when the action block returns Unit in Either.Right" in {
         val action = Action.asyncF {
           IO.pure(().asRight[ActionError])
         }
-        executeAndAssertStatus(request, action, NO_CONTENT)
+        executeAndAssertStatus(action, NO_CONTENT)
       }
       "return ok JSON response when the action block returns a non Either type" in {
         val action = Action.asyncF {
           IO.pure(ActionMessage(messageValue))
         }
-        executeAndAssertStatusWithContent(request, action, OK, Json.obj("message" -> messageValue))
+        executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
       }
       "return no content response when the action block returns Unit" in {
         val action = Action.asyncF {
           IO.unit
         }
-        executeAndAssertStatus(request, action, NO_CONTENT)
+        executeAndAssertStatus(action, NO_CONTENT)
       }
       "return Result as it is" in {
         val action = Action.asyncF {
           IO.pure(Results.Ok(Json.toJson(ActionMessage(messageValue))))
         }
-        executeAndAssertStatusWithContent(request, action, OK, Json.obj("message" -> messageValue))
+        executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
       }
       "work with Future effect" in {
-        implicit val ec  = app.actorSystem.dispatcher
+        implicit val ec = app.actorSystem.dispatcher
         val action = Action.asyncF {
           Future.successful(ActionMessage(messageValue).asRight[ActionError])
         }
-        executeAndAssertStatusWithContent(request, action, OK, Json.obj("message" -> messageValue))
+        executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
       }
     }
   }
 
-  def executeAndAssertStatusWithContent[A: Writeable](
-    request: Request[A],
+  def executeAndAssertStatusWithContent[A](
     action: EssentialAction,
     expectedStatus: Int,
     expectedContent: JsValue
-  ): Assertion = {
+  )(implicit request: Request[A], writeable: Writeable[A]) = {
     val result = call(action, request)
     status(result)        mustEqual expectedStatus
     contentAsJson(result) mustEqual expectedContent
   }
 
-  def executeAndAssertStatus[A: Writeable](
-    request: Request[A],
+  def executeAndAssertStatus[A](
     action: EssentialAction,
     expectedStatus: Int
-  ): Assertion = {
+  )(implicit request: Request[A], writeable: Writeable[A]) = {
     val result = call(action, request)
     status(result) mustEqual expectedStatus
   }
