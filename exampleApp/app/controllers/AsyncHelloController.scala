@@ -1,13 +1,13 @@
 package controllers
 
-import cats.{ Applicative, Id }
+import cats.Applicative
+import cats.syntax.functor._
 import com.github.anshulbajpai.scalaPlayEff.ActionBuilderOps._
 import com.github.anshulbajpai.scalaPlayEff.{ ToFuture, ToResult }
 import play.api.libs.json.{ Json, OWrites }
 import play.api.mvc._
 import services.HelloService
 import services.HelloService.Message
-import cats.syntax.functor._
 
 class AsyncHelloController[F[_]: Applicative: ToFuture](
   val controllerComponents: ControllerComponents,

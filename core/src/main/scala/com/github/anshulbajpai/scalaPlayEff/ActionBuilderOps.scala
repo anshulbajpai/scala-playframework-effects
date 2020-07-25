@@ -9,25 +9,25 @@ object ActionBuilderOps {
   import ToFuture.ops._
   import ToResult.ops._
 
-  class ActionBuilderF[F[_], +R[_], B](target: ActionBuilder[R, B]) {
+  class ActionBuilderF[F[_], +R[_], B](actionBuilder: ActionBuilder[R, B]) {
     def apply[S: ToResult](
       block: => F[S]
     )(implicit toFuture: ToFuture[F], functor: Functor[F]): Action[AnyContent] =
-      target.async {
+      actionBuilder.async {
         block.map(_.toResult).toFuture
       }
 
     def apply[S: ToResult](
       block: R[B] => F[S]
     )(implicit toFuture: ToFuture[F], functor: Functor[F]): Action[B] =
-      target.async { request: R[B] =>
+      actionBuilder.async { request: R[B] =>
         block(request).map(_.toResult).toFuture
       }
 
     def apply[S: ToResult, A](
       bodyParser: BodyParser[A]
     )(block: R[A] => F[S])(implicit toFuture: ToFuture[F], functor: Functor[F]): Action[A] =
-      target.async(bodyParser) { request: R[A] =>
+      actionBuilder.async(bodyParser) { request: R[A] =>
         block(request).map(_.toResult).toFuture
       }
   }
