@@ -1,16 +1,17 @@
 package com.github.anshulbajpai.scalaPlayEff
 
+import cats.Id
 import cats.effect.IO
+import cats.instances.future._
 import cats.syntax.either._
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.libs.json.{ Json, OWrites }
-import play.api.mvc.{ DefaultActionBuilder, Result, Results }
+import play.api.libs.json.{Json, OWrites}
+import play.api.mvc.{DefaultActionBuilder, Result, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
 import scala.concurrent.Future
-import cats.instances.future._
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements", "org.wartremover.warts.Any"))
 class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
@@ -35,7 +36,7 @@ class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
     "return ok JSON response when the action block returns Either.Right" in {
       val messageValue = "Boom"
       val action = Action.asyncF {
-        IO.pure(Message(messageValue).asRight[ActionError])
+        IO.pure(ActionMessage(messageValue).asRight[ActionError])
       }
       val request = FakeRequest()
       val result  = call(action, request)
@@ -55,7 +56,7 @@ class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
     "return ok JSON response when the action block returns a non Either type" in {
       val messageValue = "Boom"
       val action = Action.asyncF {
-        IO.pure(Message(messageValue))
+        IO.pure(ActionMessage(messageValue))
       }
       val request = FakeRequest()
       val result  = call(action, request)
@@ -83,11 +84,11 @@ class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
       contentAsString(result) mustEqual messageValue
     }
 
-    "work with Future" in {
+    "work when effect is Future" in {
       implicit val ec  = app.actorSystem.dispatcher
       val messageValue = "Boom"
       val action = Action.asyncF {
-        Future.successful(Message(messageValue).asRight[ActionError])
+        Future.successful(ActionMessage(messageValue).asRight[ActionError])
       }
       val request = FakeRequest()
       val result  = call(action, request)
@@ -97,8 +98,9 @@ class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
 
     "work with no effect" in {
       val messageValue = "Boom"
-      val action = Action.asyncF {
-        Message(messageValue).asRight[ActionError].asAsync
+
+      val action = Action.asyncF[Id] {
+        ActionMessage(messageValue).asRight[ActionError]
       }
       val request = FakeRequest()
       val result  = call(action, request)
@@ -107,9 +109,9 @@ class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
     }
   }
 
-  case class Message(message: String)
+  case class ActionMessage(message: String)
 
-  implicit val messageWrites: OWrites[Message] = Json.writes[Message]
+  implicit val messageWrites: OWrites[ActionMessage] = Json.writes[ActionMessage]
 
   case class ActionError(message: String)
 

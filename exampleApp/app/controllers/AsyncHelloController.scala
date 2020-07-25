@@ -1,6 +1,6 @@
 package controllers
 
-import cats.Applicative
+import cats.{ Applicative, Id }
 import com.github.anshulbajpai.scalaPlayEff.ActionBuilderOps._
 import com.github.anshulbajpai.scalaPlayEff.{ ToFuture, ToResult }
 import play.api.libs.json.{ Json, OWrites }
@@ -34,8 +34,8 @@ class AsyncHelloController[F[_]: Applicative: ToFuture](
     Applicative[F].pure(TempMessage(s"Temp hello $name")) // Multi result
   }
 
-  def hello6(name: String): Action[AnyContent] = Action.asyncF {
-    helloService.hello(name).asAsync // OK JSON or Errors
+  def hello6(name: String): Action[AnyContent] = Action.asyncF[Id] {
+    helloService.hello(name) // OK JSON or Errors
   }
 
   case class TempMessage(value: String)
