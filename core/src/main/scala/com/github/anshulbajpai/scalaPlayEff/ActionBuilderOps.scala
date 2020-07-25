@@ -1,6 +1,6 @@
 package com.github.anshulbajpai.scalaPlayEff
 
-import cats.Functor
+import cats.{ Functor, Id }
 import cats.implicits._
 import play.api.mvc.{ Action, ActionBuilder, AnyContent, BodyParser }
 
@@ -34,6 +34,7 @@ object ActionBuilderOps {
 
   implicit class ActionBuilderOps[+R[_], B](target: ActionBuilder[R, B]) {
     def asyncF[F[_]] = new ActionBuilderF[F, R, B](target)
+    def sync         = new ActionBuilderF[Id, R, B](target)
   }
 
 }

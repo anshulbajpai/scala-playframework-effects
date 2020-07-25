@@ -34,7 +34,7 @@ class AsyncHelloController[F[_]: Applicative: ToFuture](
     Applicative[F].pure(TempMessage(s"Temp hello $name")) // Multi result
   }
 
-  def hello6(name: String): Action[AnyContent] = Action.asyncF[Id] {
+  def hello6(name: String): Action[AnyContent] = Action.sync {
     helloService.hello(name) // OK JSON or Errors
   }
 

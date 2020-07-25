@@ -1,13 +1,12 @@
 package com.github.anshulbajpai.scalaPlayEff
 
-import cats.Id
 import cats.effect.IO
 import cats.instances.future._
 import cats.syntax.either._
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.libs.json.{Json, OWrites}
-import play.api.mvc.{DefaultActionBuilder, Result, Results}
+import play.api.libs.json.{ Json, OWrites }
+import play.api.mvc.{ DefaultActionBuilder, Result, Results }
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
@@ -99,7 +98,7 @@ class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
     "work with no effect" in {
       val messageValue = "Boom"
 
-      val action = Action.asyncF[Id] {
+      val action = Action.sync {
         ActionMessage(messageValue).asRight[ActionError]
       }
       val request = FakeRequest()
