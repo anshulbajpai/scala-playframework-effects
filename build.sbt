@@ -51,5 +51,3 @@ def scalaVersionBasedDependencies(version: String) = {
 def scalacOptionsVersion(version: String) = {
   if (version.startsWith("2.13")) Seq("-Ymacro-annotations") else Seq.empty
 }
-
-credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials")
