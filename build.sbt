@@ -1,18 +1,21 @@
 import play.sbt.routes.RoutesKeys
 import Dependencies._
+import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
+import sbtrelease.ReleasePlugin.autoImport.releaseProcess
+import sbtrelease.ReleaseStateTransformations.runClean
 
 lazy val scala212               = "2.12.12"
 lazy val scala213               = "2.13.3"
 lazy val supportedScalaVersions = List(scala212, scala213)
 
-ThisBuild / organization := "com.github.anshulbajpai"
+ThisBuild / organization       := "com.github.anshulbajpai"
 ThisBuild / crossScalaVersions := supportedScalaVersions
-ThisBuild / scalafmtOnCompile := true
-ThisBuild / publishTo := sonatypePublishToBundle.value
+ThisBuild / scalafmtOnCompile  := true
+ThisBuild / publishTo          := sonatypePublishToBundle.value
 
 lazy val root = (project in file("."))
   .settings(
-    publish / skip := true,
+    publish / skip     := true,
     crossScalaVersions := Nil
   )
   .aggregate(core, exampleApp)
@@ -51,14 +54,12 @@ def scalacOptionsVersion(version: String) = {
   if (version.startsWith("2.13")) Seq("-Ymacro-annotations") else Seq.empty
 }
 
-import ReleaseTransformations._
-
-releaseCrossBuild := true
+releaseCrossBuild := false
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
   runClean,
-  runTest,
+  releaseStepCommandAndRemaining("+test"),
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
