@@ -1,7 +1,7 @@
-package com.github.anshulbajpai.scalaPlayEff
+package com.github.anshulbajpai.scala_play_effect
 
 import cats.syntax.either._
-import com.github.anshulbajpai.scalaPlayEff.ActionTestHelpers._
+import com.github.anshulbajpai.scala_play_effect.ActionTestHelpers._
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.{ Json, OWrites }

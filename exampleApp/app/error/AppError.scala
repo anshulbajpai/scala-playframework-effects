@@ -1,6 +1,6 @@
 package error
 
-import com.github.anshulbajpai.scalaPlayEff.ToResult
+import com.github.anshulbajpai.scala_play_effect.ToResult
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.mvc.Results.{ BadRequest, NotFound }

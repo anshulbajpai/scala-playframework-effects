@@ -1,4 +1,4 @@
-package com.github.anshulbajpai.scalaPlayEff
+package com.github.anshulbajpai.scala_play_effect
 
 import play.api.libs.json.{ Json, Writes }
 import play.api.mvc.{ Result, Results }

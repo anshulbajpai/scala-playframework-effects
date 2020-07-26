@@ -1,4 +1,4 @@
-package com.github.anshulbajpai.scalaPlayEff
+package com.github.anshulbajpai.scala_play_effect
 
 import akka.stream.Materializer
 import org.scalatest.matchers.must.Matchers._

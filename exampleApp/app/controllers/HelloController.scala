@@ -2,14 +2,14 @@ package controllers
 
 import cats.Applicative
 import cats.syntax.functor._
-import com.github.anshulbajpai.scalaPlayEff.ActionBuilderOps._
-import com.github.anshulbajpai.scalaPlayEff.{ ToFuture, ToResult }
+import com.github.anshulbajpai.scala_play_effect.ActionBuilderOps._
+import com.github.anshulbajpai.scala_play_effect.{ ToFuture, ToResult }
 import play.api.libs.json.{ Json, OWrites }
 import play.api.mvc._
 import services.HelloService
 import services.HelloService.Message
 
-class AsyncHelloController[F[_]: Applicative: ToFuture](
+class HelloController[F[_]: Applicative: ToFuture](
   val controllerComponents: ControllerComponents,
   helloService: HelloService[F]
 ) extends BaseController {

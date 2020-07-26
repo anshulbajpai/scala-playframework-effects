@@ -1,10 +1,10 @@
-package com.github.anshulbajpai.scalaPlayEff
+package com.github.anshulbajpai.scala_play_effect
 
 import akka.stream.Materializer
 import cats.effect.IO
 import cats.instances.future._
 import cats.syntax.either._
-import com.github.anshulbajpai.scalaPlayEff.ActionTestHelpers._
+import com.github.anshulbajpai.scala_play_effect.ActionTestHelpers._
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.{ Json, Writes }

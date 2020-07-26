@@ -1,4 +1,4 @@
-package com.github.anshulbajpai.scalaPlayEff
+package com.github.anshulbajpai.scala_play_effect
 
 import cats.implicits._
 import cats.{ Functor, Id }
