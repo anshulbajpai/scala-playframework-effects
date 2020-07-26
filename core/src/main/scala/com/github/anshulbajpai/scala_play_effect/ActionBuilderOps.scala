@@ -15,7 +15,7 @@ object ActionBuilderOps {
 
     def asyncF[F[_]: ToFuture: Functor, S: ToResult](
       block: R[B] => F[S]
-    )(implicit d: DummyImplicit): Action[B] =
+    ): Action[B] =
       target.async { request =>
         block(request).map(_.toResult).toFuture
       }
