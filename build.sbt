@@ -30,7 +30,6 @@ lazy val exampleApp = (project in file("exampleApp"))
 
 lazy val core = (project in file("core")).settings(
   name := "scala-playframework-effects",
-  version      := "0.1.0-SNAPSHOT",
   scalacOptions ++= Seq("-P:wartremover:traverser:org.wartremover.warts.Unsafe") ++ scalacOptionsVersion(
     scalaVersion.value
   ),
@@ -51,3 +50,21 @@ def scalaVersionBasedDependencies(version: String) = {
 def scalacOptionsVersion(version: String) = {
   if (version.startsWith("2.13")) Seq("-Ymacro-annotations") else Seq.empty
 }
+
+import ReleaseTransformations._
+
+releaseCrossBuild := true
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  releaseStepCommandAndRemaining("+publishSigned"),
+  releaseStepCommand("sonatypeBundleRelease"),
+  setNextVersion,
+  commitNextVersion,
+  pushChanges
+)
