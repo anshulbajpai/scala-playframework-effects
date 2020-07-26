@@ -5,12 +5,13 @@ lazy val scala212               = "2.12.12"
 lazy val scala213               = "2.13.3"
 lazy val supportedScalaVersions = List(scala212, scala213)
 
+ThisBuild / organization := "com.github.anshulbajpai"
+ThisBuild / crossScalaVersions := supportedScalaVersions
+ThisBuild / scalafmtOnCompile := true
+
 lazy val root = (project in file("."))
   .settings(
-    name         := "scala-playframework-effects",
-    organization := "com.github.anshulbajpai",
-    version      := "1.0-SNAPSHOT",
-    commonSettings,
+    publish / skip := true,
     crossScalaVersions := Nil
   )
   .aggregate(core, exampleApp)
@@ -18,7 +19,7 @@ lazy val root = (project in file("."))
 lazy val exampleApp = (project in file("exampleApp"))
   .enablePlugins(PlayScala)
   .settings(
-    commonSettings,
+    publish / skip := true,
     RoutesKeys.routesImport -= "controllers.Assets.Asset",
     libraryDependencies ++= Seq(
       macwire
@@ -27,8 +28,11 @@ lazy val exampleApp = (project in file("exampleApp"))
   .dependsOn(core)
 
 lazy val core = (project in file("core")).settings(
-  commonSettings,
-  scalacOptions ++= Seq("-P:wartremover:traverser:org.wartremover.warts.Unsafe") ++ scalacOptionsVersion(scalaVersion.value),
+  name := "scala-playframework-effects",
+  version      := "0.1.0-SNAPSHOT",
+  scalacOptions ++= Seq("-P:wartremover:traverser:org.wartremover.warts.Unsafe") ++ scalacOptionsVersion(
+    scalaVersion.value
+  ),
   libraryDependencies ++= Seq(
     play,
     catsEffect,
@@ -38,14 +42,10 @@ lazy val core = (project in file("core")).settings(
 )
 
 def scalaVersionBasedDependencies(version: String) = {
-  if (version.startsWith("2.13")) Seq.empty else
-  Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
+  if (version.startsWith("2.13")) Seq.empty
+  else
+    Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
 }
-
-lazy val commonSettings = Seq(
-  crossScalaVersions := supportedScalaVersions,
-  scalafmtOnCompile  := true
-)
 
 def scalacOptionsVersion(version: String) = {
   if (version.startsWith("2.13")) Seq("-Ymacro-annotations") else Seq.empty
