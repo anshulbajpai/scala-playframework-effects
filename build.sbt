@@ -8,6 +8,7 @@ lazy val supportedScalaVersions = List(scala212, scala213)
 ThisBuild / organization := "com.github.anshulbajpai"
 ThisBuild / crossScalaVersions := supportedScalaVersions
 ThisBuild / scalafmtOnCompile := true
+ThisBuild / publishTo := sonatypePublishToBundle.value
 
 lazy val root = (project in file("."))
   .settings(
