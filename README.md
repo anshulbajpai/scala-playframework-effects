@@ -4,7 +4,7 @@ This is  a library that add effects support to Scala [playframework](https://git
 
 [![Build Status](https://github.com/anshulbajpai/scala-playframework-effects/workflows/build/badge.svg?branch=master)](https://github.com/anshulbajpai/scala-playframework-effects/actions?query=workflow%3Abuild+branch%3Amaster)
 [![License](https://img.shields.io/hexpm/l/apa?style=plastic)](https://github.com/anshulbajpai/scala-playframework-effects/blob/master/LICENSE)
-
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.anshulbajpai/scala-playframework-effects_2.13/0.1.0?style=plastic)](https://search.maven.org/artifact/com.github.anshulbajpai/scala-playframework-effects_2.13/0.1.0/jar)
 
 ## Underlying needs
 
