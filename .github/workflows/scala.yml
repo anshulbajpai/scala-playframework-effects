@@ -2,9 +2,9 @@ name: build
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches:
+      - master
+      - playframework-2.8.x
 
 jobs:
   build:
