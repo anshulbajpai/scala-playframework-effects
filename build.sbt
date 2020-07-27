@@ -47,7 +47,7 @@ lazy val core = (project in file("core")).settings(
 def scalaVersionBasedDependencies(version: String) = {
   if (version.startsWith("2.13")) Seq.empty
   else
-    Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
+    Seq(compilerPlugin(macroParadise))
 }
 
 def scalacOptionsVersion(version: String) = {
