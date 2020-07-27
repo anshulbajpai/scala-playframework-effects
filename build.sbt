@@ -34,7 +34,7 @@ lazy val core = (project in file("core")).settings(
     catsEffect,
     simulacrum,
     scalaTestPlay,
-    compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
+    compilerPlugin(macroParadise)
   )
 )
 
