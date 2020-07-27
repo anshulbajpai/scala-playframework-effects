@@ -2,7 +2,7 @@
 
 This is a library that adds effects support to the Scala [playframework](https://github.com/playframework/playframework) Actions.
 
-[![Build Status](https://github.com/anshulbajpai/scala-playframework-effects/workflows/build/badge.svg?branch=master)](https://github.com/anshulbajpai/scala-playframework-effects/actions?query=workflow%3Abuild+branch%3Amaster)
+[![Build Status](https://img.shields.io/github/workflow/status/anshulbajpai/scala-playframework-effects/build/playframework-2.8.x?label=build-playframework-2.8.x)](https://github.com/anshulbajpai/scala-playframework-effects/actions?query=workflow%3Abuild+branch%3Aplayframework-2.8.x)
 [![License](https://img.shields.io/hexpm/l/apa?style=plastic)](https://github.com/anshulbajpai/scala-playframework-effects/blob/master/LICENSE)
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.anshulbajpai/scala-playframework-effects_2.13/0.1.0?style=plastic)](https://search.maven.org/artifact/com.github.anshulbajpai/scala-playframework-effects_2.13/0.1.0/jar)
 
