@@ -1,6 +1,7 @@
 package com.github.anshulbajpai.scala_play_effect
 
-import akka.stream.Materializer
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 import cats.effect.IO
 import cats.instances.future._
 import cats.syntax.either._
@@ -14,14 +15,13 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-@SuppressWarnings(Array("org.wartremover.warts.Any"))
 class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
 
   import ActionBuilderOps._
 
-  implicit lazy val materializer: Materializer = app.materializer
-  lazy val Action                              = app.injector.instanceOf(classOf[DefaultActionBuilder])
-  lazy val BodyParsers                         = app.injector.instanceOf(classOf[DefaultPlayBodyParsers])
+  implicit lazy val materializer = ActorMaterializer()(ActorSystem())
+  lazy val Action                = app.injector.instanceOf(classOf[DefaultActionBuilder])
+  lazy val BodyParsers           = app.injector.instanceOf(classOf[DefaultPlayBodyParsers])
 
   "asyncF" when {
     val errorValue   = "App Error"

@@ -1,11 +1,11 @@
 package com.github.anshulbajpai.scala_play_effect
 
 import akka.stream.Materializer
-import org.scalatest.matchers.must.Matchers._
 import play.api.http.Writeable
 import play.api.libs.json.JsValue
 import play.api.mvc.{ EssentialAction, Request }
 import play.api.test.Helpers.{ call, contentAsJson, status, _ }
+import org.scalatest.MustMatchers._
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
 object ActionTestHelpers extends {
