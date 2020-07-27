@@ -1,7 +1,7 @@
 package com.github.anshulbajpai.scala_play_effect
 
 import akka.stream.Materializer
-import org.scalatest.matchers.must.Matchers._
+import org.scalatest.MustMatchers._
 import play.api.http.Writeable
 import play.api.libs.json.JsValue
 import play.api.mvc.{ EssentialAction, Request }

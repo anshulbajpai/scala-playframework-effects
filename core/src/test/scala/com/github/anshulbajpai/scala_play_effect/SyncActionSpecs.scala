@@ -9,7 +9,7 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements", "org.wartremover.warts.Any"))
+@SuppressWarnings(Array("org.wartremover.warts.Any"))
 class SyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
 
   implicit lazy val materializer = app.materializer
