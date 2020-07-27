@@ -32,7 +32,7 @@ lazy val exampleApp = (project in file("exampleApp"))
   .dependsOn(core)
 
 lazy val core = (project in file("core")).settings(
-  name := "scala-playframework-effects",
+  name := "scala-playframework-effects-2.8.x",
   scalacOptions ++= Seq("-P:wartremover:traverser:org.wartremover.warts.Unsafe") ++ scalacOptionsVersion(
     scalaVersion.value
   ),
