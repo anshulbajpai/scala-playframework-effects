@@ -1,6 +1,6 @@
 # scala-playframework-effects
 
-Scala [playframework](https://github.com/playframework/playframework) Action methods on batteries.
+Scala [playframework](https://github.com/playframework/playframework) Action builders on batteries.
 
 [![License](https://img.shields.io/hexpm/l/apa?style=plastic)](https://github.com/anshulbajpai/scala-playframework-effects/blob/master/LICENSE)
 
@@ -28,31 +28,31 @@ There were three major underlying reasons which led to the creation of this libr
 
 - ### Error handling
 
-Often working on projects that use playframework, I observed that teams used failed `Future` to represent business errors.
+Often working on projects that use playframework, I observed that teams used failed `Future` to model business errors.
 The recipe is simple -
 1. Create an exception case class for a business error
-2. Wrap the exception in a failed `Future` and return it from the service which reaches the `Action` block and is returned from there.
+2. Wrap the exception in a failed `Future` and return it from the service which reaches the action block and is returned from there.
 3. Handle that exception in the playframework's global error handler to convert it into a `Result`.
 
-That's it. This seems to be such an easy way of error handling that many of us might have done it this way at least once in the past. If not with the playframework but with some other library.
+That's it. This seems to be such an easy way of error handling that many of us might have done it this way at least once in the past, if not with the playframework but with some other library.
 
 There are few downsides to this approach though 
 
-- The business error encoding is lost in `Future`'s syntax. Looking at a Future returned from a service, we can't tell which business error it could be carrying.
-   It is also not obvious how to handle a business in error in a service thrown by another collaborator service. 
+- The business error encoding is lost in `Future`'s syntax. Looking at a `Future` returned from a service, we can't tell which business error it could be carrying.
+   It is also not obvious how to handle a business error in a service thrown by another collaborator service. 
    We will have to peek into the code of collaborator service code to find out which exception to handle.
 
-- The controller action is not complete in its own. The action method is part complete as it is not returning a `Result` but instead a failed `Future` in case of business error.
+- The controller action is not complete in its own. The action block does not return a `Result` but instead a failed `Future` in case of business error.
    The mapping of failed `Future` to `Result` is done in a global error handler. 
-   This also makes unit testing of action method incomplete. We can only test that the action method will return a failed `Future` when a business error occurs.
+   This also makes unit testing of the controller action incomplete. We can only test that the action will return a failed `Future` when a business error occurs.
    We will have to write a separate test for global error handler which can't give any confidence that the business error will be translated into correct `Result` as the action method and the global error handler are disconnected.
    To get full confidence, we will have to write an expensive integration test.   
 
-A better approach could be to return `Future[Either[E, A]]` from the services which force the action method to handle
- the error and convert the `Either` into `Result`
+A better approach could be to return `Future[Either[E, A]]` from the services which force the action block to handle
+ the error and convert the `Either` into `Result` for both success and error.
 
 If we follow this approach of returning `Future[Either[E, A]]` from the services, we will realise that our action
- methods will become heavy as they will now have to handle the `Either`.
+ methods will become heavy as they will now have to handle the `Either` for both success and error. 
 This seems to be a problem of its own. Either we will handle the `Either` in the controller or create some helper method
  outside the controller to handle the `Either`.   
 Handling it in some helper method controller is not that bad, but we still need to call that method in the action method.
@@ -61,7 +61,7 @@ This library tries to solve the problem of handling the `Either` in a neater app
  
 - ### Sensible defaults
 
-Often when writing action methods for RESTful services, we have to convert a case class into an `Ok` result returning a
+Often while writing action methods for RESTful services, we have to convert a case class into an `Ok` result returning a
  JSON response or we have to convert a `Future.successful(())` into a `NoContent` response.  
 
 This library provides some sensible defaults to allow easier conversion to a `Result` 
@@ -69,22 +69,31 @@ This library provides some sensible defaults to allow easier conversion to a `Re
 - ### Using alternative to Future effect
 
 We create services where the effect is abstracted, but the controller's action methods are locked to `Future`. Whatever
- effect we use for our services, 
+ the effect we use for our services, 
  e.g. [IO](https://typelevel.org/cats-effect/datatypes/io.html), 
  [Task](https://monix.io/docs/2x/eval/task.html), 
  [ZIO](https://zio.dev/), we still have to convert it into a `Future`.  
 
 This library provides a way to create action methods which are abstracted from effect. At the moment, we only support
- [IO](https://typelevel.org/cats-effect/datatypes/io.html). 
+ [IO](https://typelevel.org/cats-effect/datatypes/io.html). This also allows writing controllers using the tagless-final approach.
 
 
 ## Usage
 
-Actions can be created using `Action.asyncF` and `Action.sync` methods after importing
- `com.github.anshulbajpai.scala_play_effect.ActionBuilderOps._`
+Add `scala-playframework-effects` as SBT dependency
+
+```sbt
+libraryDependencies += "com.github.anshulbajpai" %% "scala-playframework-effects" % "(version)"
+```
+
+The minimum playframework version we support is 2.6.x. Our versioning strategy is aligned with playframework's versions up to their minor version, e.g. - `2.7.1.0` library version will work with play 2.7.x. The `1.0` sub-version
+represents the version of this library for play 2.7.x.   
 
 
-Assuming following code is present in the scope.
+Actions can be created using `Action.asyncF` and `Action.sync` methods after importing `com.github.anshulbajpai.scala_play_effect.ActionBuilderOps._`.
+
+
+Assuming the following code is present in the scope.
 
 ```scala
 import com.github.anshulbajpai.scala_play_effect.ActionBuilderOps._
@@ -104,7 +113,7 @@ implicit val actionErrorToResult: ToResult[ActionError] = new ToResult[ActionErr
 ```
 
 ### asyncF
-The `asyncF` method helps create Action method blocks which can return a value wrapped in an effect `F[_]`.
+The `asyncF` method helps create Actions from blocks which can return a value wrapped in an effect `F[_]`.
 It also comes with some sensible defaults to map the block's return type to a proper `Result` 
 
 - Returning `Future[Unit]`
