@@ -250,4 +250,4 @@ The `HelloController.scala` has examples on how to use this library to write act
 
 
 ## mdoc
-This README is generated via [mdoc](https://scalameta.org/mdoc/). The is the [source file](README.md)
+This README is generated via [mdoc](https://scalameta.org/mdoc/). This is the [source file](README.md)
