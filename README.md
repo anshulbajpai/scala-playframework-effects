@@ -243,6 +243,29 @@ contentAsJson(result)
 These examples and more cases are covered in [AsyncActionSpecs.scala](core/src/test/scala/com/github/anshulbajpai/scala_play_effect/AsyncActionSpecs.scala)
  and [SyncActionSpecs.scala](core/src/test/scala/com/github/anshulbajpai/scala_play_effect/SyncActionSpecs.scala)
 
+## How does it work
+
+There are mainly two typeclasses which helps doing all the magic under-the-hood.
+
+```scala
+trait ToFuture[F[_]] {
+  def toFuture[T](t: F[T]): Future[T]
+}
+
+trait ToResult[S] { 
+  def toResult(s: S): Result
+}
+```
+
+If your code has a `ToFuture` instance for an effect `F` (needs to be a `Functor` too) and a `ToResult` instance for a type `S`, 
+then you can create an action like this
+
+```scala
+Action.asyncF { req =>
+  // return F[S]
+}
+```
+
 ## Using tagless-final
 
 Using this library, it is very easy to create tagless-final components right up to the controllers.
