@@ -245,9 +245,9 @@ These examples and more cases are covered in [AsyncActionSpecs.scala](core/src/t
 
 ## Using tagless-final
 
-Using this library, it is very easy to create tagless-final components right upto the controllers.
+Using this library, it is very easy to create tagless-final components right up to the controllers.
 There is an example play application included in the repository under the [exampleApp](exampleApp) directory which shows
-how to use tagless-final end-to-end using this library and [macwire](https://github.com/softwaremill/macwire)
+how to use tagless-final end-to-end using this library and [macwire](https://github.com/softwaremill/macwire). 
 The [HelloController.scala](exampleApp/app/controllers/HelloController.scala) has examples on how to use this library to write actions method effortlessly without thinking of HTTP status code and serialization most of the time.
 
 ## mdoc
