@@ -49,6 +49,7 @@ lazy val docs = project
   .in(file("core-docs"))
   .dependsOn(core)
   .settings(
+    mdocOut := baseDirectory.value.getParentFile,
     libraryDependencies ++= Seq(
       "org.scalatestplus.play" %% "scalatestplus-play" % Versions.scalaTestPlayVersion
     )

@@ -105,6 +105,7 @@ val Action = DefaultActionBuilder(PlayBodyParsers().default)
 
 ```
 
+Assuming following code is present in the scope.
 
 ```scala mdoc:silent
 import com.github.anshulbajpai.scala_play_effect.ActionBuilderOps._
@@ -118,18 +119,10 @@ case class ActionError(error: String)
 implicit val errorWrites: Writes[ActionError] = Json.writes[ActionError]
 
 implicit val actionErrorToResult: ToResult[ActionError] = new ToResult[ActionError] {
-override def toResult(error: ActionError): Result = Results.BadRequest(Json.toJson(error))
+    override def toResult(error: ActionError): Result = Results.BadRequest(Json.toJson(error))
 }
 
 ```
-
-### asyncF
-The `asyncF` method will help create Action methods which can return a value wrapped in an effect `F[_]`. 
-
-## Usage
-
-Actions can be created using `Action.asyncF` and `Action.sync` methods after importing
- `com.github.anshulbajpai.scala_play_effect.ActionBuilderOps._`
 
 ### asyncF
 The `asyncF` method helps create Action method blocks which can return a value wrapped in an effect `F[_]`.
