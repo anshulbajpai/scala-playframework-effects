@@ -75,7 +75,7 @@ We create services where the effect is abstracted, but the controller's action m
  [ZIO](https://zio.dev/), we still have to convert it into a `Future`.  
 
 This library provides a way to create action methods which are abstracted from effect. At the moment, we only support
- [IO](https://typelevel.org/cats-effect/datatypes/io.html). This also allows writing controllers using the tagless-final approach.
+ [IO](https://typelevel.org/cats-effect/datatypes/io.html). This allows writing controllers using the tagless-final approach as well.
 
 
 ## Usage
@@ -115,7 +115,7 @@ implicit val actionErrorToResult: ToResult[ActionError] = new ToResult[ActionErr
 ### asyncF
 The `asyncF` method helps create Actions from blocks which can return a value wrapped in an effect `F[_]`.
 It also comes with some sensible defaults to map the block's return type to a proper `Result`. For example an action block
-returning a Future[Unit] will be converted into a HTTP NoContent status code.  
+returning a Future[Unit] will be converted into an HTTP NoContent status code.  
 
 - Returning `Future[Unit]`
 
@@ -124,8 +124,8 @@ val action = Action.asyncF { _ =>
     Future.unit
 }
 // action: play.api.mvc.Action[play.api.mvc.AnyContent] = Action(parser=BodyParser((no name)))
-val result = call(action, request)
-// result: Future[Result] = Future(Success(Result(204, TreeMap())))
+val result = call(action, request) // call is imported from play.api.test.Helpers
+// result: Future[Result] = Future(Success(Result(204, TreeMap()))) // call is imported from play.api.test.Helpers
 status(result)
 // res0: Int = 204
 ```
@@ -177,7 +177,7 @@ contentAsJson(errorActionResult)
 // )
 ```
 
-- Using request body 
+- Using the request body 
 
 ```scala
 val successAction = Action(json).asyncF { req =>
@@ -222,8 +222,8 @@ status(result)
 ```
 
 ### sync
-The `sync` method is similar to `asyncF` in all aspects except that it doesn't need a effect to be returned in return type of action block.
-It also comes with the same sensible defaults like `asyncF`
+The `sync` method is similar to `asyncF` in all aspects except that it doesn't need an effect to be returned in the return type of action block.
+It also comes with the same sensible defaults as `asyncF`
 
 ```scala
 val action = Action.sync { _ =>
@@ -239,3 +239,10 @@ contentAsJson(result)
 //   Map("message" -> JsString("some message"))
 // )
 ```
+
+These examples and more cases are covered in `AsyncActionSpecs.scala` and `SyncActionSpecs.scala`.
+
+## Using tagless-final
+
+There is an example play application included in the repository under the `exampleApp` directory.
+The application is using the tagless-final approach end-to-end. The DI is done via [macwire](https://github.com/softwaremill/macwire)
