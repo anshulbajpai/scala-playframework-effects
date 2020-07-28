@@ -230,3 +230,4 @@ These examples and more cases are covered in `AsyncActionSpecs.scala` and `SyncA
 
 There is an example play application included in the repository under the `exampleApp` directory.
 The application is using the tagless-final approach end-to-end. The DI is done via [macwire](https://github.com/softwaremill/macwire)
+The `HelloController.scala` has examples on how to use this library to write actions method effortlessly without thinking of HTTP status code and serialization most of the time.
