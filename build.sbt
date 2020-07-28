@@ -50,6 +50,7 @@ lazy val docs = project
   .dependsOn(core)
   .settings(
     mdocOut := baseDirectory.value.getParentFile,
+    mdocExtraArguments := Seq("--no-link-hygiene"),
     libraryDependencies ++= Seq(
       "org.scalatestplus.play" %% "scalatestplus-play" % Versions.scalaTestPlayVersion
     )

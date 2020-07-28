@@ -240,14 +240,15 @@ contentAsJson(result)
 // )
 ```
 
-These examples and more cases are covered in `AsyncActionSpecs.scala` and `SyncActionSpecs.scala`
+These examples and more cases are covered in [AsyncActionSpecs.scala](core/src/test/scala/com/github/anshulbajpai/scala_play_effect/AsyncActionSpecs.scala)
+ and [SyncActionSpecs.scala](core/src/test/scala/com/github/anshulbajpai/scala_play_effect/SyncActionSpecs.scala)
 
 ## Using tagless-final
 
-There is an example play application included in the repository under the `exampleApp` directory.
-The application is using the tagless-final approach end-to-end. The DI is done via [macwire](https://github.com/softwaremill/macwire)
-The `HelloController.scala` has examples on how to use this library to write actions method effortlessly without thinking of HTTP status code and serialization most of the time.
-
+Using this library, it is very easy to create tagless-final components right upto the controllers.
+There is an example play application included in the repository under the [exampleApp](exampleApp) directory which shows
+how to use tagless-final end-to-end using this library and [macwire](https://github.com/software mill/macwire)
+The [HelloController.scala](exampleApp/app/controllers/HelloController.scala) has examples on how to use this library to write actions method effortlessly without thinking of HTTP status code and serialization most of the time.
 
 ## mdoc
-This README is generated via [mdoc](https://scalameta.org/mdoc/). This is the [source file](README.md)
+This README is generated via [mdoc](https://scalameta.org/mdoc/). This is the [source file](docs/README.md)
