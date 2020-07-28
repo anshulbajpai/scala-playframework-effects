@@ -110,8 +110,10 @@ import cats.effect.IO
 
 implicit val system = ActorSystem()
 implicit val ec = system.dispatcher
-val Action = DefaultActionBuilder(PlayBodyParsers().default)
+val bodyParsers = PlayBodyParsers()
+import bodyParsers.json
 
+val Action = DefaultActionBuilder(bodyParsers.default)
 ```
 
 Assuming the following code is present in the scope.
@@ -119,7 +121,7 @@ Assuming the following code is present in the scope.
 ```scala mdoc:silent
 import com.github.anshulbajpai.scala_play_effect.ActionBuilderOps._
 
-implicit val request = FakeRequest()
+implicit val request = FakeRequest().withJsonBody(Json.obj("message" -> "some message"))
 
 case class ActionMessage(message: String)
 implicit val messageWrites: Writes[ActionMessage] = Json.writes[ActionMessage]
@@ -135,7 +137,8 @@ implicit val actionErrorToResult: ToResult[ActionError] = new ToResult[ActionErr
 
 ### asyncF
 The `asyncF` method helps create Actions from blocks which can return a value wrapped in an effect `F[_]`.
-It also comes with some sensible defaults to map the block's return type to a proper `Result` 
+It also comes with some sensible defaults to map the block's return type to a proper `Result`. For example an action block
+returning a Future[Unit] will be converted into a HTTP NoContent status code.  
 
 - Returning `Future[Unit]`
 
@@ -176,6 +179,18 @@ status(errorActionResult)
 contentAsJson(errorActionResult)
 ```
 
+- Using request body 
+
+```scala mdoc:nest
+val successAction = Action(json).asyncF { req =>
+    Future.successful(ActionMessage((req.body \ "message").as[String]).asRight[ActionError])
+}
+val successActionResult = call(successAction, request)
+status(successActionResult)
+contentAsJson(successActionResult)
+```
+
+
 - Returning `IO[Unit]`
 
 ```scala mdoc:nest
@@ -184,4 +199,27 @@ val action = Action.asyncF { _ =>
 }
 val result = call(action, request)
 status(result)
+```
+
+- Returning `Result` as it is
+
+```scala mdoc:nest
+val action = Action.asyncF { _ =>
+    IO.pure(Results.NoContent)
+}
+val result = call(action, request)
+status(result)
+```
+
+### sync
+The `sync` method is similar to `asyncF` in all aspects except that it doesn't need a effect to be returned in return type of action block.
+It also comes with the same sensible defaults like `asyncF`
+
+```scala mdoc:nest
+val action = Action.sync { _ =>
+    ActionMessage("some message")
+}
+val result = call(action, request)
+status(result)
+contentAsJson(result)
 ```

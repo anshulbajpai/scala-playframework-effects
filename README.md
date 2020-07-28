@@ -98,7 +98,7 @@ Assuming the following code is present in the scope.
 ```scala
 import com.github.anshulbajpai.scala_play_effect.ActionBuilderOps._
 
-implicit val request = FakeRequest()
+implicit val request = FakeRequest().withJsonBody(Json.obj("message" -> "some message"))
 
 case class ActionMessage(message: String)
 implicit val messageWrites: Writes[ActionMessage] = Json.writes[ActionMessage]
@@ -114,7 +114,8 @@ implicit val actionErrorToResult: ToResult[ActionError] = new ToResult[ActionErr
 
 ### asyncF
 The `asyncF` method helps create Actions from blocks which can return a value wrapped in an effect `F[_]`.
-It also comes with some sensible defaults to map the block's return type to a proper `Result` 
+It also comes with some sensible defaults to map the block's return type to a proper `Result`. For example an action block
+returning a Future[Unit] will be converted into a HTTP NoContent status code.  
 
 - Returning `Future[Unit]`
 
@@ -176,6 +177,24 @@ contentAsJson(errorActionResult)
 // )
 ```
 
+- Using request body 
+
+```scala
+val successAction = Action(json).asyncF { req =>
+    Future.successful(ActionMessage((req.body \ "message").as[String]).asRight[ActionError])
+}
+// successAction: play.api.mvc.Action[play.api.libs.json.JsValue] = Action(parser=BodyParser(conditional, wrapping=BodyParser(json, maxLength=102400)))
+val successActionResult = call(successAction, request)
+// successActionResult: Future[Result] = Future(Success(Result(200, TreeMap())))
+status(successActionResult)
+// res7: Int = 200
+contentAsJson(successActionResult)
+// res8: play.api.libs.json.JsValue = JsObject(
+//   Map("message" -> JsString("some message"))
+// )
+```
+
+
 - Returning `IO[Unit]`
 
 ```scala
@@ -186,5 +205,37 @@ val action = Action.asyncF { _ =>
 val result = call(action, request)
 // result: Future[Result] = Future(Success(Result(204, TreeMap())))
 status(result)
-// res7: Int = 204
+// res9: Int = 204
+```
+
+- Returning `Result` as it is
+
+```scala
+val action = Action.asyncF { _ =>
+    IO.pure(Results.NoContent)
+}
+// action: play.api.mvc.Action[play.api.mvc.AnyContent] = Action(parser=BodyParser((no name)))
+val result = call(action, request)
+// result: Future[Result] = Future(Success(Result(204, TreeMap())))
+status(result)
+// res10: Int = 204
+```
+
+### sync
+The `sync` method is similar to `asyncF` in all aspects except that it doesn't need a effect to be returned in return type of action block.
+It also comes with the same sensible defaults like `asyncF`
+
+```scala
+val action = Action.sync { _ =>
+    ActionMessage("some message")
+}
+// action: play.api.mvc.Action[play.api.mvc.AnyContent] = Action(parser=BodyParser((no name)))
+val result = call(action, request)
+// result: Future[Result] = Future(Success(Result(200, TreeMap())))
+status(result)
+// res11: Int = 200
+contentAsJson(result)
+// res12: play.api.libs.json.JsValue = JsObject(
+//   Map("message" -> JsString("some message"))
+// )
 ```
