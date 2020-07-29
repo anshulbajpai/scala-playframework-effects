@@ -4,6 +4,7 @@ import akka.stream.Materializer
 import cats.effect.IO
 import cats.instances.future._
 import cats.syntax.either._
+import cats.~>
 import com.github.anshulbajpai.scala_play_effect.ActionTestHelpers._
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -22,6 +23,8 @@ class AsyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
   implicit lazy val materializer: Materializer = app.materializer
   lazy val Action                              = app.injector.instanceOf(classOf[DefaultActionBuilder])
   lazy val BodyParsers                         = app.injector.instanceOf(classOf[DefaultPlayBodyParsers])
+
+  implicit val ioToFuture: IO ~> Future = λ[IO ~> Future](_.unsafeToFuture())
 
   "asyncF" when {
     val errorValue   = "App Error"

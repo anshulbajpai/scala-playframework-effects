@@ -25,7 +25,9 @@ lazy val exampleApp = (project in file("exampleApp"))
   .settings(
     publish / skip := true,
     RoutesKeys.routesImport -= "controllers.Assets.Asset",
+    addCompilerPlugin(kindProjector),
     libraryDependencies ++= Seq(
+      catsEffect,
       macwire
     )
   )
@@ -36,11 +38,13 @@ lazy val core = (project in file("core")).settings(
   scalacOptions ++= Seq("-P:wartremover:traverser:org.wartremover.warts.Unsafe") ++ scalacOptionsVersion(
     scalaVersion.value
   ),
+  addCompilerPlugin(kindProjector),
   libraryDependencies ++= Seq(
     play,
-    catsEffect,
+    cats,
     simulacrum,
-    scalaTestPlay
+    scalaTestPlay,
+    catsEffect % Test
   ) ++ scalaVersionBasedDependencies(scalaVersion.value)
 )
 
