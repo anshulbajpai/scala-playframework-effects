@@ -1,18 +1,21 @@
 package controllers
 
-import cats.Applicative
 import cats.syntax.functor._
+import cats.{ Applicative, ~> }
 import com.github.anshulbajpai.scala_play_effect.ActionBuilderOps._
-import com.github.anshulbajpai.scala_play_effect.{ ToFuture, ToResult }
+import com.github.anshulbajpai.scala_play_effect.ToResult
 import play.api.libs.json.{ Json, OWrites }
 import play.api.mvc._
 import services.HelloService
 import services.HelloService.Message
 
-class HelloController[F[_]: Applicative: ToFuture](
+import scala.concurrent.Future
+
+class HelloController[F[_]: Applicative](
   val controllerComponents: ControllerComponents,
   helloService: HelloService[F]
-) extends BaseController {
+)(implicit fk: F ~> Future)
+    extends BaseController {
 
   def hello1(name: String): Action[AnyContent] = Action.asyncF { _ =>
     helloService.helloF(name) // OK JSON or Errors

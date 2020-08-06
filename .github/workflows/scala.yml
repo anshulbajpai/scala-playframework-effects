@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - playframework-2.6.x
+      - playframework-2.7.x
       - playframework-2.8.x
 
 jobs:

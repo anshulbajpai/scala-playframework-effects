@@ -20,7 +20,9 @@ lazy val exampleApp = (project in file("exampleApp"))
   .settings(
     publish / skip := true,
     RoutesKeys.routesImport -= "controllers.Assets.Asset",
+    addCompilerPlugin(kindProjector),
     libraryDependencies ++= Seq(
+      catsEffect,
       macwire
     )
   )
@@ -29,14 +31,30 @@ lazy val exampleApp = (project in file("exampleApp"))
 lazy val core = (project in file("core")).settings(
   name := "scala-playframework-effects",
   scalacOptions ++= Seq("-P:wartremover:traverser:org.wartremover.warts.Unsafe"),
+  addCompilerPlugin(kindProjector),
   libraryDependencies ++= Seq(
     play,
-    catsEffect,
+    cats,
     simulacrum,
     scalaTestPlay,
+    catsEffect % Test,
     compilerPlugin(macroParadise)
   )
 )
+
+lazy val docs = project
+  .in(file("core-docs"))
+  .dependsOn(core)
+  .settings(
+    addCompilerPlugin(kindProjector),
+    mdocOut            := baseDirectory.value.getParentFile,
+    mdocExtraArguments := Seq("--no-link-hygiene"),
+    libraryDependencies ++= Seq(
+      scalaTestPlay.withConfigurations(Some(Compile.name)),
+      catsEffect
+    )
+  )
+  .enablePlugins(MdocPlugin)
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
