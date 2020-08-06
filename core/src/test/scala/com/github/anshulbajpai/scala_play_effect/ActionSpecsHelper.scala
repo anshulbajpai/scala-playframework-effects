@@ -1,20 +1,28 @@
 package com.github.anshulbajpai.scala_play_effect
 
-import akka.stream.Materializer
+import akka.actor.ActorSystem
 import org.scalatest.MustMatchers._
 import play.api.http.Writeable
 import play.api.libs.json.JsValue
-import play.api.mvc.{ EssentialAction, Request }
+import play.api.mvc.{ DefaultActionBuilder, EssentialAction, PlayBodyParsers, Request }
 import play.api.test.Helpers.{ call, contentAsJson, status, _ }
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
-object ActionTestHelpers extends {
+trait ActionSpecsHelper {
+
+  private implicit val system = ActorSystem()
+  implicit val ec             = system.dispatcher
+  private val bodyParsers     = PlayBodyParsers()
+
+  val json = bodyParsers.json
+
+  val Action = DefaultActionBuilder(bodyParsers.default)
 
   def executeAndAssertStatusWithContent[A](
     action: EssentialAction,
     expectedStatus: Int,
     expectedContent: JsValue
-  )(implicit request: Request[A], writeable: Writeable[A], materialize: Materializer) = {
+  )(implicit request: Request[A], writeable: Writeable[A]) = {
     val result = call(action, request)
     status(result)        mustEqual expectedStatus
     contentAsJson(result) mustEqual expectedContent
@@ -23,7 +31,7 @@ object ActionTestHelpers extends {
   def executeAndAssertStatus[A](
     action: EssentialAction,
     expectedStatus: Int
-  )(implicit request: Request[A], writeable: Writeable[A], materialize: Materializer) = {
+  )(implicit request: Request[A], writeable: Writeable[A]) = {
     val result = call(action, request)
     status(result) mustEqual expectedStatus
   }

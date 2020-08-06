@@ -91,10 +91,33 @@ represents the version of this library for play 2.7.x.
 
 Actions can be created using `Action.asyncF` and `Action.sync` methods after importing `com.github.anshulbajpai.scala_play_effect.ActionBuilderOps._`.
 
+```scala mdoc:invisible
+import play.api.mvc.DefaultActionBuilder
+import play.api.mvc.PlayBodyParsers
+import play.api.mvc.Result
+import play.api.mvc.Results
+import akka.actor.ActorSystem
+import akka.stream.Materializer._
+import scala.concurrent.Future
+import play.api.test.Helpers._
+import play.api.test.FakeRequest
+import play.api.libs.json.{ Json, Writes }
+import com.github.anshulbajpai.scala_play_effect.ToResult
+import cats.instances.future._
+import cats.syntax.either._
+import cats.effect.IO
+
+implicit val system = ActorSystem()
+implicit val ec = system.dispatcher
+val bodyParsers = PlayBodyParsers()
+import bodyParsers.json
+
+val Action = DefaultActionBuilder(bodyParsers.default)
+```
 
 Assuming the following code is present in the scope.
 
-```scala
+```scala mdoc:silent
 import com.github.anshulbajpai.scala_play_effect.ActionBuilderOps._
 import cats.~>
 
@@ -126,125 +149,86 @@ returning a Future[Unit] will be converted into an HTTP NoContent status code.
 
 - Returning `Future[Unit]`
 
-```scala
+```scala mdoc:nest
 val action = Action.asyncF { _ =>
     Future.unit
 }
-// action: play.api.mvc.Action[play.api.mvc.AnyContent] = Action(parser=BodyParser((no name)))
 val result = call(action, request) // call is imported from play.api.test.Helpers
-// result: Future[Result] = Future(Success(Result(204, TreeMap()))) // call is imported from play.api.test.Helpers
 status(result)
-// res0: Int = 204
 ```
 
 - Returning `Future[A]`
 
-```scala
+```scala mdoc:nest
 val action = Action.asyncF { _ =>
     Future.successful(ActionMessage("some message"))
 }
-// action: play.api.mvc.Action[play.api.mvc.AnyContent] = Action(parser=BodyParser((no name)))
 val result = call(action, request)
-// result: Future[Result] = Future(Success(Result(200, TreeMap())))
 status(result)
-// res1: Int = 200
 contentAsJson(result)
-// res2: play.api.libs.json.JsValue = JsObject(
-//   Map("message" -> JsString("some message"))
-// )
 ```
 
 - Returning `Future[Either[A, B]]`
 
-```scala
+```scala mdoc:nest
 val successAction = Action.asyncF { _ =>
     Future.successful(ActionMessage("some message").asRight[ActionError])
 }
-// successAction: play.api.mvc.Action[play.api.mvc.AnyContent] = Action(parser=BodyParser((no name)))
 val successActionResult = call(successAction, request)
-// successActionResult: Future[Result] = Future(Success(Result(200, TreeMap())))
 status(successActionResult)
-// res3: Int = 200
 contentAsJson(successActionResult)
-// res4: play.api.libs.json.JsValue = JsObject(
-//   Map("message" -> JsString("some message"))
-// )
 
 val errorAction = Action.asyncF { _ =>
     Future.successful(ActionError("some error").asLeft[ActionMessage])
 }
-// errorAction: play.api.mvc.Action[play.api.mvc.AnyContent] = Action(parser=BodyParser((no name)))
 val errorActionResult = call(errorAction, request)
-// errorActionResult: Future[Result] = Future(Success(Result(400, TreeMap())))
 status(errorActionResult)
-// res5: Int = 400
 contentAsJson(errorActionResult)
-// res6: play.api.libs.json.JsValue = JsObject(
-//   Map("error" -> JsString("some error"))
-// )
 ```
 
 - Using the request body 
 
-```scala
+```scala mdoc:nest
 val successAction = Action(json).asyncF { req =>
     Future.successful(ActionMessage((req.body \ "message").as[String]).asRight[ActionError])
 }
-// successAction: play.api.mvc.Action[play.api.libs.json.JsValue] = Action(parser=BodyParser(conditional, wrapping=BodyParser(json, maxLength=102400)))
 val successActionResult = call(successAction, request)
-// successActionResult: Future[Result] = Future(Success(Result(200, TreeMap())))
 status(successActionResult)
-// res7: Int = 200
 contentAsJson(successActionResult)
-// res8: play.api.libs.json.JsValue = JsObject(
-//   Map("message" -> JsString("some message"))
-// )
 ```
 
 
 - Returning `IO[Unit]`
 
-```scala
+```scala mdoc:nest
 val action = Action.asyncF { _ =>
     IO.unit
 }
-// action: play.api.mvc.Action[play.api.mvc.AnyContent] = Action(parser=BodyParser((no name)))
 val result = call(action, request)
-// result: Future[Result] = Future(Success(Result(204, TreeMap())))
 status(result)
-// res9: Int = 204
 ```
 
 - Returning `Result` as it is
 
-```scala
+```scala mdoc:nest
 val action = Action.asyncF { _ =>
     IO.pure(Results.NoContent)
 }
-// action: play.api.mvc.Action[play.api.mvc.AnyContent] = Action(parser=BodyParser((no name)))
 val result = call(action, request)
-// result: Future[Result] = Future(Success(Result(204, TreeMap())))
 status(result)
-// res10: Int = 204
 ```
 
 ### sync
 The `sync` method is similar to `asyncF` in all aspects except that it doesn't need an effect to be returned in the return type of action block.
 It also comes with the same sensible defaults as `asyncF`
 
-```scala
+```scala mdoc:nest
 val action = Action.sync { _ =>
     ActionMessage("some message")
 }
-// action: play.api.mvc.Action[play.api.mvc.AnyContent] = Action(parser=BodyParser((no name)))
 val result = call(action, request)
-// result: Future[Result] = Future(Success(Result(200, TreeMap())))
 status(result)
-// res11: Int = 200
 contentAsJson(result)
-// res12: play.api.libs.json.JsValue = JsObject(
-//   Map("message" -> JsString("some message"))
-// )
 ```
 
 These examples and more cases are covered in [AsyncActionSpecs.scala](core/src/test/scala/com/github/anshulbajpai/scala_play_effect/AsyncActionSpecs.scala)

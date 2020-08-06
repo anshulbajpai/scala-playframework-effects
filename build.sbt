@@ -12,6 +12,7 @@ ThisBuild / organization       := "com.github.anshulbajpai"
 ThisBuild / crossScalaVersions := supportedScalaVersions
 ThisBuild / scalafmtOnCompile  := true
 ThisBuild / publishTo          := sonatypePublishToBundle.value
+ThisBuild / scalaVersion       := scala213
 
 lazy val root = (project in file("."))
   .settings(
@@ -25,7 +26,9 @@ lazy val exampleApp = (project in file("exampleApp"))
   .settings(
     publish / skip := true,
     RoutesKeys.routesImport -= "controllers.Assets.Asset",
+    addCompilerPlugin(kindProjector),
     libraryDependencies ++= Seq(
+      catsEffect,
       macwire
     )
   )
@@ -36,13 +39,29 @@ lazy val core = (project in file("core")).settings(
   scalacOptions ++= Seq("-P:wartremover:traverser:org.wartremover.warts.Unsafe") ++ scalacOptionsVersion(
     scalaVersion.value
   ),
+  addCompilerPlugin(kindProjector),
   libraryDependencies ++= Seq(
     play,
-    catsEffect,
+    cats,
     simulacrum,
-    scalaTestPlay
+    scalaTestPlay,
+    catsEffect % Test
   ) ++ scalaVersionBasedDependencies(scalaVersion.value)
 )
+
+lazy val docs = project
+  .in(file("core-docs"))
+  .dependsOn(core)
+  .settings(
+    addCompilerPlugin(kindProjector),
+    mdocOut            := baseDirectory.value.getParentFile,
+    mdocExtraArguments := Seq("--no-link-hygiene"),
+    libraryDependencies ++= Seq(
+      scalaTestPlay.withConfigurations(Some(Compile.name)),
+      catsEffect
+    )
+  )
+  .enablePlugins(MdocPlugin)
 
 def scalaVersionBasedDependencies(version: String) = {
   if (version.startsWith("2.13")) Seq.empty

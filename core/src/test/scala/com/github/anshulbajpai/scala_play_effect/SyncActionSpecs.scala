@@ -1,20 +1,14 @@
 package com.github.anshulbajpai.scala_play_effect
 
 import cats.syntax.either._
-import com.github.anshulbajpai.scala_play_effect.ActionTestHelpers._
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.WordSpecLike
 import play.api.libs.json.{ Json, OWrites }
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
 @SuppressWarnings(Array("org.wartremover.warts.Any"))
-class SyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
-
-  implicit lazy val materializer = app.materializer
-  lazy val Action                = app.injector.instanceOf(classOf[DefaultActionBuilder])
-  lazy val BodyParsers           = app.injector.instanceOf(classOf[DefaultPlayBodyParsers])
+class SyncActionSpecs extends ActionSpecsHelper with WordSpecLike {
 
   import ActionBuilderOps._
 
@@ -22,7 +16,6 @@ class SyncActionSpecs extends PlaySpec with GuiceOneAppPerSuite {
     val error        = "App Error"
     val messageValue = "App Message"
     "used with a request" should {
-      import BodyParsers.json
       implicit val request =
         FakeRequest().withJsonBody(Json.obj("message" -> messageValue, "error" -> error))
       "return error when block returns Either.Left" in {
