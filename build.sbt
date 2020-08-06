@@ -12,6 +12,7 @@ ThisBuild / organization       := "com.github.anshulbajpai"
 ThisBuild / crossScalaVersions := supportedScalaVersions
 ThisBuild / scalafmtOnCompile  := true
 ThisBuild / publishTo          := sonatypePublishToBundle.value
+ThisBuild / scalaVersion       := scala213
 
 lazy val root = (project in file("."))
   .settings(
@@ -47,6 +48,18 @@ lazy val core = (project in file("core")).settings(
     catsEffect % Test
   ) ++ scalaVersionBasedDependencies(scalaVersion.value)
 )
+
+lazy val docs = project
+  .in(file("core-docs"))
+  .dependsOn(core)
+  .settings(
+    mdocOut := baseDirectory.value.getParentFile,
+    mdocExtraArguments := Seq("--no-link-hygiene"),
+    libraryDependencies ++= Seq(
+      "org.scalatestplus.play" %% "scalatestplus-play" % Versions.scalaTestPlayVersion
+    )
+  )
+  .enablePlugins(MdocPlugin)
 
 def scalaVersionBasedDependencies(version: String) = {
   if (version.startsWith("2.13")) Seq.empty
