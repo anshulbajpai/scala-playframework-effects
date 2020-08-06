@@ -20,8 +20,7 @@ object Dependencies {
   val catsEffect    = "org.typelevel"            %% "cats-effect"        % catsEffectVersion
   val simulacrum    = "org.typelevel"            %% "simulacrum"         % simulacrumVersion
   val macwire       = "com.softwaremill.macwire" %% "macros"             % macwireVersion % "provided"
-  val scalaTestPlay = "org.scalatestplus.play"   %% "scalatestplus-play" % scalaTestPlayVersion % "test"
+  val scalaTestPlay = "org.scalatestplus.play"   %% "scalatestplus-play" % scalaTestPlayVersion % Test
   val macroParadise = "org.scalamacros"          % "paradise"            % macroParadiseVersion cross CrossVersion.full
   val kindProjector = "org.typelevel"            % "kind-projector"      % kindProjectorVersion cross CrossVersion.full
-
 }

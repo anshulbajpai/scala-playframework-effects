@@ -53,10 +53,12 @@ lazy val docs = project
   .in(file("core-docs"))
   .dependsOn(core)
   .settings(
-    mdocOut := baseDirectory.value.getParentFile,
+    addCompilerPlugin(kindProjector),
+    mdocOut            := baseDirectory.value.getParentFile,
     mdocExtraArguments := Seq("--no-link-hygiene"),
     libraryDependencies ++= Seq(
-      "org.scalatestplus.play" %% "scalatestplus-play" % Versions.scalaTestPlayVersion
+      scalaTestPlay.withConfigurations(Some(Compile.name)),
+      catsEffect
     )
   )
   .enablePlugins(MdocPlugin)

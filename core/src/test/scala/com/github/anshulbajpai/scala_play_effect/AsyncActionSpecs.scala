@@ -5,7 +5,7 @@ import cats.instances.future._
 import cats.syntax.either._
 import cats.~>
 import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.libs.json.{ Json, Writes }
+import play.api.libs.json.{Json, Writes}
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

@@ -66,16 +66,15 @@ Often while writing action methods for RESTful services, we have to convert a ca
 
 This library provides some sensible defaults to allow easier conversion to a `Result` 
 
-- ### Using alternative to Future effect
+- ### Bring your own effect
 
-We create services where the effect is abstracted, but the controller's action methods are locked to `Future`. Whatever
+We can create services where the effect is abstracted, but the controller's action methods are always tied to the only `Future` effect. Whatever
  the effect we use for our services, 
  e.g. [IO](https://typelevel.org/cats-effect/datatypes/io.html), 
  [Task](https://monix.io/docs/2x/eval/task.html), 
  [ZIO](https://zio.dev/), we still have to convert it into a `Future`.  
 
-This library provides a way to create action methods which are abstracted from effect. At the moment, we only support
- [IO](https://typelevel.org/cats-effect/datatypes/io.html). This allows writing controllers using the tagless-final approach as well.
+This library provides a way to create action methods which are abstracted from effect. This allows writing controllers using the tagless-final approach as well.
 
 
 ## Usage
@@ -194,6 +193,15 @@ contentAsJson(successActionResult)
 - Returning `IO[Unit]`
 
 ```scala mdoc:nest
+import cats.~>
+implicit val ioToFuture: IO ~> Future = λ[IO ~> Future](_.unsafeToFuture())
+/*
+  The above `ioToFuture` implicit can also be written as below. We have used kind-projector compiler plugin for brevity.
+  implicit val ioToFuture: FunctionK[IO, Future] =  new FunctionK[IO, Future] {
+    override def apply[A](fa: IO[A]): Future[A] = fa.unsafeToFuture()
+  }
+*/
+
 val action = Action.asyncF { _ =>
     IO.unit
 }
@@ -229,19 +237,16 @@ These examples and more cases are covered in [AsyncActionSpecs.scala](core/src/t
 
 ## How does it work
 
-There are mainly two typeclasses which helps doing all the magic under-the-hood.
+We take help of [cats](https://typelevel.org/cats/) natural transformation data type [FunctionK](https://typelevel.org/cats/datatypes/functionk.html) and our own
+`ToResult` typeclass to do all under-the-hood transformation. 
 
 ```scala
-trait ToFuture[F[_]] {
-  def toFuture[T](t: F[T]): Future[T]
-}
-
 trait ToResult[S] { 
   def toResult(s: S): Result
 }
 ```
 
-If your code has a `ToFuture` instance for an effect `F` (needs to be a `Functor` too) and a `ToResult` instance for a type `S`, 
+If your code has a `FunctionK[F, Future]` instance available for an effect `F[_]` and a `ToResult` instance for a type `S`, 
 then you can create an action like this
 
 ```scala
