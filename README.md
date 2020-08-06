@@ -199,7 +199,7 @@ contentAsJson(successActionResult)
 ```scala
 import cats.~>
 implicit val ioToFuture: IO ~> Future = λ[IO ~> Future](_.unsafeToFuture())
-// ioToFuture: IO ~> Future = repl.MdocSession$App$$anon$2@3a86d186
+// ioToFuture: IO ~> Future = repl.MdocSession$App$$anon$2@320ba7a8
 /*
   The above `ioToFuture` implicit can also be written as below. We have used kind-projector compiler plugin for brevity.
   implicit val ioToFuture: FunctionK[IO, Future] =  new FunctionK[IO, Future] {
@@ -263,7 +263,7 @@ trait ToResult[S] {
 }
 ```
 
-If your code has a `FunctionK[F, Future]` instance available for an effect `F[_]` and a `ToResult` instance for a type `S`, 
+If your code has a `FunctionK[F, Future]` instance available for an effect `F[_]` (needs to be a `Functor` too) and a `ToResult` instance for a type `S`, 
 then you can create an action like this
 
 ```scala

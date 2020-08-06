@@ -246,7 +246,7 @@ trait ToResult[S] {
 }
 ```
 
-If your code has a `FunctionK[F, Future]` instance available for an effect `F[_]` and a `ToResult` instance for a type `S`, 
+If your code has a `FunctionK[F, Future]` instance available for an effect `F[_]` (needs to be a `Functor` too) and a `ToResult` instance for a type `S`, 
 then you can create an action like this
 
 ```scala
