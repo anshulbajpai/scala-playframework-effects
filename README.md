@@ -96,6 +96,7 @@ Assuming the following code is present in the scope.
 
 ```scala
 import com.github.anshulbajpai.scala_play_effect.ActionBuilderOps._
+import cats.~>
 
 implicit val request = FakeRequest().withJsonBody(Json.obj("message" -> "some message"))
 
@@ -109,6 +110,13 @@ implicit val actionErrorToResult: ToResult[ActionError] = new ToResult[ActionErr
     override def toResult(error: ActionError): Result = Results.BadRequest(Json.toJson(error))
 }
 
+implicit val ioToFuture: IO ~> Future = λ[IO ~> Future](_.unsafeToFuture())
+/*
+  The above `ioToFuture` implicit can also be written as below. We have used kind-projector compiler plugin for brevity above.
+  implicit val ioToFuture: FunctionK[IO, Future] =  new FunctionK[IO, Future] {
+    override def apply[A](fa: IO[A]): Future[A] = fa.unsafeToFuture()
+  }
+*/
 ```
 
 ### asyncF
@@ -197,16 +205,6 @@ contentAsJson(successActionResult)
 - Returning `IO[Unit]`
 
 ```scala
-import cats.~>
-implicit val ioToFuture: IO ~> Future = λ[IO ~> Future](_.unsafeToFuture())
-// ioToFuture: IO ~> Future = repl.MdocSession$App$$anon$2@320ba7a8
-/*
-  The above `ioToFuture` implicit can also be written as below. We have used kind-projector compiler plugin for brevity.
-  implicit val ioToFuture: FunctionK[IO, Future] =  new FunctionK[IO, Future] {
-    override def apply[A](fa: IO[A]): Future[A] = fa.unsafeToFuture()
-  }
-*/
-
 val action = Action.asyncF { _ =>
     IO.unit
 }
