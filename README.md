@@ -9,17 +9,17 @@ Scala [playframework](https://github.com/playframework/playframework) Action bui
 ### Play 2.8.x
 
 [![Build Status](https://github.com/anshulbajpai/scala-playframework-effects/workflows/build/badge.svg?branch=playframework-2.8.x)](https://github.com/anshulbajpai/scala-playframework-effects/actions?query=workflow%3Abuild+branch%3Aplayframework-2.8.x)
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.anshulbajpai/scala-playframework-effects_2.13/2.8.1.0?label=maven)](https://search.maven.org/artifact/com.github.anshulbajpai/scala-playframework-effects_2.13/2.8.1.0/jar)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.anshulbajpai/scala-playframework-effects_2.13/2.8.1.1?label=maven)](https://search.maven.org/artifact/com.github.anshulbajpai/scala-playframework-effects_2.13/2.8.1.1/jar)
 
 ### Play 2.7.x
 
 [![Build Status](https://github.com/anshulbajpai/scala-playframework-effects/workflows/build/badge.svg?branch=playframework-2.7.x)](https://github.com/anshulbajpai/scala-playframework-effects/actions?query=workflow%3Abuild+branch%3Aplayframework-2.7.x)
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.anshulbajpai/scala-playframework-effects_2.13/2.7.1.0?label=maven)](https://search.maven.org/artifact/com.github.anshulbajpai/scala-playframework-effects_2.13/2.7.1.0/jar)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.anshulbajpai/scala-playframework-effects_2.13/2.7.1.1?label=maven)](https://search.maven.org/artifact/com.github.anshulbajpai/scala-playframework-effects_2.13/2.7.1.1/jar)
 
 ### Play 2.6.x
 
 [![Build Status](https://github.com/anshulbajpai/scala-playframework-effects/workflows/build/badge.svg?branch=playframework-2.6.x)](https://github.com/anshulbajpai/scala-playframework-effects/actions?query=workflow%3Abuild+branch%3Aplayframework-2.6.x)
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.anshulbajpai/scala-playframework-effects_2.12/2.6.1.0?label=maven)](https://search.maven.org/artifact/com.github.anshulbajpai/scala-playframework-effects_2.12/2.6.1.0/jar)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.anshulbajpai/scala-playframework-effects_2.12/2.6.1.1?label=maven)](https://search.maven.org/artifact/com.github.anshulbajpai/scala-playframework-effects_2.12/2.6.1.1/jar)
 
 
 ## Underlying needs
