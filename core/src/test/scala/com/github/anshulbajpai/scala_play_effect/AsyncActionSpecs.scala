@@ -11,6 +11,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
 import scala.concurrent.Future
+import cats.syntax.option._
 
 @SuppressWarnings(Array("org.wartremover.warts.Any"))
 class AsyncActionSpecs extends ActionSpecsHelper with AnyWordSpecLike {
@@ -39,11 +40,26 @@ class AsyncActionSpecs extends ActionSpecsHelper with AnyWordSpecLike {
         executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
       }
       "return no content response when the action block returns Unit in Either.Right" in {
-        val action = Action(json).asyncF { _: Request[_] =>
+        val action = Action(json).asyncF { _ =>
           IO.pure(().asRight[ActionError])
         }
         executeAndAssertStatus(action, NO_CONTENT)
       }
+
+      "return not found response when the action block returns None" in {
+        val action = Action.asyncF { _ =>
+          IO.pure(none[String])
+        }
+        executeAndAssertStatus(action, NOT_FOUND)
+      }
+
+      "return ok when the action block returns Some" in {
+        val action = Action(json).asyncF { req =>
+          IO.pure(Some(ActionMessage((req.body \ "message").as[String])))
+        }
+        executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
+      }
+
       "return ok JSON response when the action block returns a non Either type" in {
         val action = Action(json).asyncF { req =>
           IO.pure(ActionMessage((req.body \ "message").as[String]))
@@ -51,7 +67,7 @@ class AsyncActionSpecs extends ActionSpecsHelper with AnyWordSpecLike {
         executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
       }
       "return no content response when the action block returns Unit" in {
-        val action = Action(json).asyncF { _: Request[_] =>
+        val action = Action(json).asyncF { _ =>
           IO.unit
         }
         executeAndAssertStatus(action, NO_CONTENT)

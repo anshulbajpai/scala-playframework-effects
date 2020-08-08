@@ -1,8 +1,9 @@
 package com.github.anshulbajpai.scala_play_effect
 
 import cats.syntax.either._
+import cats.syntax.option.none
 import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.libs.json.{ Json, OWrites }
+import play.api.libs.json.{Json, OWrites}
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -36,6 +37,22 @@ class SyncActionSpecs extends ActionSpecsHelper with AnyWordSpecLike {
         }
         executeAndAssertStatus(action, NO_CONTENT)
       }
+
+      "return not found response when the action block returns None" in {
+        val action = Action.sync { _ =>
+          none[String]
+        }
+        executeAndAssertStatus(action, NOT_FOUND)
+      }
+
+      "return ok when the action block returns Some" in {
+        val action = Action(json).sync { req =>
+          Some(ActionMessage((req.body \ "message").as[String]))
+        }
+        executeAndAssertStatusWithContent(action, OK, Json.obj("message" -> messageValue))
+      }
+
+
       "return ok JSON response when the action block returns a non Either type" in {
         val action = Action(json).sync { req =>
           ActionMessage((req.body \ "message").as[String])

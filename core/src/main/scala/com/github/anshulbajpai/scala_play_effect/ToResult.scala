@@ -29,4 +29,8 @@ object ToResult {
   implicit object idResult extends ToResult[Result] {
     override def toResult(s: Result): Result = s
   }
+
+  implicit def notFoundOrA[A: ToResult]: ToResult[Option[A]] = new ToResult[Option[A]] {
+    override def toResult(s: Option[A]): Result = s.map(_.toResult).getOrElse(Results.NotFound)
+  }
 }
